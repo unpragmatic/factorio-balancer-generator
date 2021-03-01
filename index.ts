@@ -150,42 +150,59 @@ function aboutEqual(a: number, b: number, delta: number) {
     return b - delta <= a && a <= b + delta;
 }
 
-function main() {
-    let i = 0;
+function arrayAboutEqual(a: number[], b: number[], delta: number): boolean {
+    if (a.length !== b.length) {
+        return false;
+    }
+
+    return a.every((a_value, a_idx) => aboutEqual(a_value, b[a_idx], delta));
+}
+
+function normalise(array: number[]) {
+    const sum = array.reduce((sum, val) => sum + val, 0);
+    return array.map(v => v / sum);
+}
+
+function solve(input: number, output: number, connectors: number, ratios: number[], options: any) {
+    const normalisedRatios = normalise(ratios);
+
+    const inputStates = Array(input).fill(0)
+        .map((_, idx) => idx)
+        .map(idx => Array(input + output + connectors).fill(0).map((_, innerIdx) => idx === innerIdx ? 1 : 0));
+
+    
+    let iterationCount = 0;
     while (true) {
         try {
-            const graph = generate(3, 3, 4);
-            // printGraph(graph)
+            const graph = generate(input, output, connectors);
 
-            const inputStates = [
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
-            ]
+            const outputNodeIds = getOutputNodes(graph).map(node => node.id);
 
-            const results = []
-            for (const inputState of inputStates) {
-                const result = simulate(graph, inputState);
-                const target = [1 / 3, 1 / 3, 1 / 3]
+            const results = inputStates
+                .map(inputState => simulate(graph, inputState))
+                .map(result => outputNodeIds.map(outputNodeId => result[outputNodeId]));
+            
+            const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
 
-                results.push(result);
-            }
-
-            // console.log(results)
-            const allGood = results.every(result => aboutEqual(result[7], 1 / 3, 0.01) && aboutEqual(result[8], 1 / 3, 0.01) && aboutEqual(result[9], 1 / 3, 0.01))
-            if (allGood) {
-                printGraph(graph)
+            if (graphStatisfiesRatios) {
                 console.log(results)
-                break;
+                return graph;
             }
         } catch (e) {
-            // console.log(e)
+            
         }
-        i += 1;
-        if (i % 10000 === 0) {
-            process.stdout.write(`\rIteration Count: ${i}`,)
+
+        iterationCount += 1;
+        if (iterationCount % 10000 === 0) {
+            process.stdout.write(`\rIteration Count: ${iterationCount}`,)
         }
     }
+}
+
+function main() {
+
+    const graph = solve(3, 3, 6, [3, 1, 1], {});
+    printGraph(graph);
 }
 
 main()
