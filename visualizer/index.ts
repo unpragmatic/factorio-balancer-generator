@@ -24,28 +24,43 @@ interface FactorioNode {
     square?: Square
 }
 
+// Simplest possible example
 // const input: FactorioNode[] = [
 //     { id: 0, type: NodeType.Input, connection: [ 1 ] },
-//     { id: 1, type: NodeType.Splitter, connection: [ 2, 3 ] },
+//     { id: 1, type: NodeType.Splitter, connection: [2] },
 //     { id: 2, type: NodeType.Output, connection: [] },
-//     { id: 3, type: NodeType.Output, connection: [] },
 //   ]
 
-
+// Double connection example
 const input: FactorioNode[] = [
-    { id: 0, type: NodeType.Input, connection: [ 4 ] },
-    { id: 1, type: NodeType.Input, connection: [ 4 ] },
-    { id: 2, type: NodeType.Input, connection: [ 5 ] },
-    { id: 3, type: NodeType.Input, connection: [ 6 ] },
-    { id: 4, type: NodeType.Splitter, connection: [ 5, 5 ] },
-    { id: 5, type: NodeType.Splitter, connection: [ 7, 8 ] },
-    { id: 6, type: NodeType.Splitter, connection: [ 9, 10 ] },
-    { id: 7, type: NodeType.Output, connection: [] },
-    { id: 8, type: NodeType.Output, connection: [] },
-    { id: 9, type: NodeType.Output, connection: [] },
-    { id: 10, type: NodeType.Output, connection: [] }
+    { id: 0, type: NodeType.Input, connection: [ 1 ] },
+    { id: 1, type: NodeType.Splitter, connection: [ 2, 3 ] },
+    { id: 2, type: NodeType.Output, connection: [] },
+    { id: 3, type: NodeType.Output, connection: [] },
   ]
 
+// More compliated example
+// const input: FactorioNode[] = [
+//     { id: 0, type: NodeType.Input, connection: [ 4 ] },
+//     { id: 1, type: NodeType.Input, connection: [ 4 ] },
+//     { id: 2, type: NodeType.Input, connection: [ 5 ] },
+//     { id: 3, type: NodeType.Input, connection: [ 6 ] },
+//     { id: 4, type: NodeType.Splitter, connection: [ 5, 5 ] },
+//     { id: 5, type: NodeType.Splitter, connection: [ 7, 8 ] },
+//     { id: 6, type: NodeType.Splitter, connection: [ 9, 10 ] },
+//     { id: 7, type: NodeType.Output, connection: [] },
+//     { id: 8, type: NodeType.Output, connection: [] },
+//     { id: 9, type: NodeType.Output, connection: [] },
+//     { id: 10, type: NodeType.Output, connection: [] }
+//   ]
+
+// Simple loopback example
+// const input: FactorioNode[] = [
+//     { id: 0, type: NodeType.Input, connection: [ 1 ] },
+//     { id: 1, type: NodeType.Splitter, connection: [ 2, 2 ] },
+//     { id: 2, type: NodeType.Splitter, connection: [ 3, 1 ] },
+//     { id: 3, type: NodeType.Output, connection: [] },
+//   ]
 
 const x_gap = 3
 const y_gap = 4
