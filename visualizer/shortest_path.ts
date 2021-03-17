@@ -1,21 +1,23 @@
 
-interface SearchNode {
+export interface SearchNode {
     x: number
     y: number
     f_cost: number
     parent?: SearchNode
+    traversable: boolean
 }
 
-function shortest_path_between_nodes(start: SearchNode, finish: SearchNode, grid: SearchNode[][]): SearchNode[] {
+export function shortest_path_between_nodes(start: SearchNode, finish: SearchNode, grid: SearchNode[][]): SearchNode[] {
     let open_nodes: SearchNode[] = [];
     let closed_nodes: SearchNode[] = [];
+    let current_node: SearchNode | undefined = undefined
 
     open_nodes.push(start);
 
     while(open_nodes.length > 0) {
         // Find node with lowest f_cost in the open_nodes
         let mininum_f_cost = Math.min(...open_nodes.map(node => node.f_cost));
-        let current_node = open_nodes.find(node => node.f_cost === mininum_f_cost)!;
+        current_node = open_nodes.find(node => node.f_cost === mininum_f_cost)!;
 
         // Remove current node from open
         open_nodes = open_nodes.filter(node => node !== current_node);
@@ -46,7 +48,14 @@ function shortest_path_between_nodes(start: SearchNode, finish: SearchNode, grid
         })
     }
 
-    return closed_nodes;
+    var path_to_finish: SearchNode[] = []
+    
+    while (current_node !== undefined && current_node.parent !== undefined) {
+        path_to_finish.unshift(current_node)
+        current_node = current_node.parent
+    }
+
+    return path_to_finish;
 }
 
 function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): SearchNode[] {
@@ -57,23 +66,23 @@ function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): S
     const y = node.y
 
     try {
-        let left_node = grid[x - 1][y]
-        if (left_node !== undefined) surronding.push(grid[x - 1][y])
+        let left_node = grid[y][x - 1]
+        if (left_node !== undefined && left_node.traversable) surronding.push(grid[y][x - 1])
     } catch(err) { }
     
     try {
-        let right_node = grid[x + 1][y]
-        if (right_node !== undefined) surronding.push(grid[x + 1][y])
+        let right_node = grid[y][x + 1]
+        if (right_node !== undefined  && right_node.traversable) surronding.push(grid[y][x + 1])
     } catch(err) { }
     
     try {
-        let top_node = grid[x][y + 1]
-        if (top_node !== undefined) surronding.push(grid[x][y + 1])
+        let top_node = grid[y + 1][x]
+        if (top_node !== undefined  && top_node.traversable) surronding.push(grid[y + 1][x])
     } catch(err) { }
     
     try {
-        let bottom_node = grid[x][y - 1]
-        if (bottom_node !== undefined) surronding.push(grid[x][y - 1])
+        let bottom_node = grid[y - 1][x]
+        if (bottom_node !== undefined  && bottom_node.traversable) surronding.push(grid[y - 1][x])
     } catch(err) { }
 
     return surronding
@@ -89,22 +98,31 @@ function distance_between_two_nodes(first: SearchNode, second: SearchNode): numb
 
 let grid: SearchNode[][] = [
     [
-        { x:0, y:0, f_cost: 0},
-        { x:1, y:0, f_cost: 0},
-        { x:2, y:0, f_cost: 0},
+        { x:0, y:0, f_cost: 0, traversable: true},
+        { x:1, y:0, f_cost: 0, traversable: true},
+        { x:2, y:0, f_cost: 0, traversable: true},
+        { x:3, y:0, f_cost: 0, traversable: false},
     ],
     [
-        { x:0, y:1, f_cost: 0},
-        { x:1, y:1, f_cost: 0},
-        { x:2, y:1, f_cost: 0},
+        { x:0, y:1, f_cost: 0, traversable: true},
+        { x:1, y:1, f_cost: 0, traversable: true},
+        { x:2, y:1, f_cost: 0, traversable: true},
+        { x:3, y:1, f_cost: 0, traversable: true},
     ],
     [
-        { x:0, y:2, f_cost: 0},
-        { x:1, y:2, f_cost: 0},
-        { x:2, y:2, f_cost: 0},
+        { x:0, y:2, f_cost: 0, traversable: true},
+        { x:1, y:2, f_cost: 0, traversable: true},
+        { x:2, y:2, f_cost: 0, traversable: false},
+        { x:3, y:2, f_cost: 0, traversable: true},
+    ],
+    [
+        { x:0, y:3, f_cost: 0, traversable: false},
+        { x:1, y:3, f_cost: 0, traversable: true},
+        { x:2, y:3, f_cost: 0, traversable: false},
+        { x:3, y:3, f_cost: 0, traversable: true},
     ]
 ]
 
 let start = grid[0][0]
-let finish = grid[2][2]
+let finish = grid[3][3]
 console.log(shortest_path_between_nodes(start, finish, grid))
