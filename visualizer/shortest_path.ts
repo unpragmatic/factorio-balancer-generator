@@ -23,29 +23,27 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
         open_nodes = open_nodes.filter(node => node !== current_node);
         closed_nodes.push(current_node);
 
-        if (current_node === finish) { break; }
+        if (current_node.x == finish.x && current_node.y == finish.y) {
+             break; 
+        }
 
         // Check the surronding nodes
         let surronding_nodes: SearchNode[] = get_surronding_nodes_in_grid(current_node, grid);
         
         // Evalute the f_cost of the nodes
-        surronding_nodes.forEach(node => {
-            if (closed_nodes.includes(node)) { return; }
+        for (const surrounding_node of surronding_nodes) {
+            if (closed_nodes.includes(surrounding_node)) { continue; }
 
-            let distance_from_start = distance_between_two_nodes(node, start);
-            let distance_from_finish = distance_between_two_nodes(node, finish);
+            let distance_from_start = distance_between_two_nodes(surrounding_node, start);
+            let distance_from_finish = distance_between_two_nodes(surrounding_node, finish);
 
             let calulcated_f_cost = distance_from_start + distance_from_finish;
 
-            if (node.f_cost == 0 || node.f_cost > calulcated_f_cost) {
-                node.f_cost = calulcated_f_cost;
-                node.parent = current_node;
+            surrounding_node.f_cost = calulcated_f_cost;
+            surrounding_node.parent = current_node;
 
-                if (!open_nodes.includes(node)) {
-                    open_nodes.push(node);
-                }
-            }
-        })
+            open_nodes.push(surrounding_node);
+        }
     }
 
     var path_to_finish: SearchNode[] = []
@@ -55,7 +53,7 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
         current_node = current_node.parent
     }
 
-    return path_to_finish;
+    return path_to_finish.slice(0, -1);
 }
 
 function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): SearchNode[] {
@@ -93,7 +91,7 @@ function distance_between_two_nodes(first: SearchNode, second: SearchNode): numb
     let x_diff = second.x - first.x
     let y_diff = second.y - first.y
 
-    return x_diff + y_diff
+    return Math.abs(x_diff) + Math.abs(y_diff)
 }
 
 let grid: SearchNode[][] = [
@@ -123,6 +121,6 @@ let grid: SearchNode[][] = [
     ]
 ]
 
-let start = grid[0][0]
-let finish = grid[3][3]
-console.log(shortest_path_between_nodes(start, finish, grid))
+// let start = grid[0][0]
+// let finish = grid[3][3]
+// console.log(shortest_path_between_nodes(start, finish, grid))

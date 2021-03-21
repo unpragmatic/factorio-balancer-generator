@@ -6,7 +6,7 @@ export interface Coordinate {
     y: number
 }
 
-function build_search_grid_from_squares(squares: Square[][]): SearchNode[][] {
+function build_search_grid_from_squares(squares: Square[][], finish: Square): SearchNode[][] {
     let search_grid: SearchNode[][] = []
 
     squares.forEach(row => {
@@ -17,21 +17,23 @@ function build_search_grid_from_squares(squares: Square[][]): SearchNode[][] {
         search_grid.push(row_of_nodes)
     });
 
+    search_grid[finish.y][finish.x] = search_node_from_square(finish, true)
+
     return search_grid
 }
 
-function search_node_from_square(square: Square): SearchNode {
+function search_node_from_square(square: Square, is_finish=false): SearchNode {
     return {
         x: square.x,
         y: square.y,
-        traversable: square.type == "empty" ? true : false,
+        traversable: is_finish || square.type === ' ' ? true : false,
         f_cost: 0
     }
 }
 
 export function connection_between_squares_on_grid(first: Square, second: Square, squares: Square[][]): Coordinate[] {
-    let grid: SearchNode[][] = build_search_grid_from_squares(squares)
-    let path: SearchNode[] = shortest_path_between_nodes(search_node_from_square(first), search_node_from_square(second), grid)
+    let grid: SearchNode[][] = build_search_grid_from_squares(squares, second)
+    let path: SearchNode[] = shortest_path_between_nodes(search_node_from_square(first), search_node_from_square(second, true), grid)
 
     let coords: Coordinate[] = []
     path.forEach(searchNode => {

@@ -31,25 +31,26 @@ export interface FactorioNode {
 // ]
 
 
-// const input: FactorioNode[] = [
-//     { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 2, type: 'input', connection: [ 5 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 3, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 5, type: 'splitter', connection: [ 7, 8 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 6, type: 'splitter', connection: [ 9, 10], squares: [], connected_to: [], connection_from: [] },
-//     { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     { id: 9, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     { id: 10, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
-//   ]
-
 const input: FactorioNode[] = [
-    { id: 0, type: 'input', connection: [1], connected_to: [], squares: [], connection_from: [] },
-    { id: 1, type: 'splitter', connection: [2, 1], connected_to: [], squares: [], connection_from: [] },
-    { id: 2, type: 'output', connection: [], connected_to: [], squares: [], connection_from: [] },
-]
+    { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 2, type: 'input', connection: [ 5 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 3, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 5, type: 'splitter', connection: [ 7, 8 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 6, type: 'splitter', connection: [ 9, 10], squares: [], connected_to: [], connection_from: [] },
+    { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    { id: 9, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    { id: 10, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
+  ]
+
+// const input: FactorioNode[] = [
+//     { id: 0, type: 'input', connection: [2], connected_to: [], squares: [], connection_from: [] },
+//     { id: 1, type: 'input', connection: [2], connected_to: [], squares: [], connection_from: [] },
+//     { id: 2, type: 'splitter', connection: [3], connected_to: [], squares: [], connection_from: [] },
+//     { id: 3, type: 'output', connection: [], connected_to: [], squares: [], connection_from: [] },
+// ]
 
 const x_gap = 4
 const y_gap = 4
@@ -68,15 +69,20 @@ function grid_filled(input: FactorioNode[], grid: Grid) {
     return mutated_grid
 }
 
-function grid_with_empty_square(grid: Grid) {
+function grid_with_empty_squares(grid: Grid) {
     var mutated_grid: Grid = grid
 
     let squares = grid.squares
     let max_y = squares.length
-    let max_x = Math.max(squares.values.length)
+    let max_x = Math.max(...squares.map(row => row.length))
 
-    for (let y = 0; y < 3; y++) {
-        console.log ("Block statement execution no." + i);
+    for (let y = 0; y < max_y; y++) {
+        for (let x = 0; x <= max_x; x++){
+            if (!squares[y][x]) {
+                mutated_grid = grid_with_node_of_type(mutated_grid, 'empty', x, y)
+            }
+        }
+        
     }
 
     return mutated_grid
@@ -156,7 +162,7 @@ function grid_with_connection_between(grid: Grid, first_square: Square, second_s
     let coords = connection_between_squares_on_grid(first_square, second_square, grid.squares)
     
     coords.forEach(coord => 
-            mutated_grid.squares[coord.y][coord.x] = {type: "connector", x: coord.x, y: coord.y}
+            mutated_grid = grid_with_connector_node(mutated_grid, coord.x, coord.y)
         )
 
     // const x1 = first_square.x
@@ -202,6 +208,8 @@ function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y
         case 'output':
             mutated_grid = grid_with_output_node(mutated_grid, pos_x, pos_y)
             return mutated_grid;
+        case 'empty':
+            mutated_grid = grid_with_empty_square(mutated_grid, pos_x, pos_y)
 
     }
 
@@ -235,6 +243,12 @@ function grid_with_output_node(grid: Grid, pos_x: number, pos_y: number): Grid {
     return mutated_grid
 }
 
+function grid_with_empty_square(grid: Grid, pos_x: number, pos_y: number): Grid {
+    var mutated_grid: Grid = grid
+    mutated_grid.squares[pos_y][pos_x] = { type: ' ', x: pos_x, y: pos_y }
+    return mutated_grid
+}
+
 function display_grid(grid: Grid) {
     for (let i = 0; i < grid.squares.length; i++) {
         var formatted_line: string = ""
@@ -250,7 +264,8 @@ const filled_grid = grid_filled(input, {
     squares: [[]],
     nodes: []
 })
-const connected_grid = grid_connected(filled_grid)
+const complete_grid = grid_with_empty_squares(filled_grid)
+const connected_grid = grid_connected(complete_grid)
 display_grid(connected_grid)
 
 // function calculate_connection_depth_of_input(input: Factorio_Node[]){
