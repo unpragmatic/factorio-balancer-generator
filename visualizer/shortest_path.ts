@@ -5,6 +5,9 @@ export interface SearchNode {
     f_cost: number
     parent?: SearchNode
     traversable: boolean
+    is_start: boolean
+    is_destination: boolean
+    direction?: 'north' | 'south' | 'east' | 'west'
 }
 
 export function shortest_path_between_nodes(start: SearchNode, finish: SearchNode, grid: SearchNode[][]): SearchNode[] {
@@ -62,28 +65,78 @@ function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): S
 
     const x = node.x
     const y = node.y
+    
+    // The next node after a starting point must go in the direction of the starting point
+    if (node.is_start) {
+        switch (node.direction) {
+            case "east":
+                try {
+                    let left_node = grid[y][x - 1]
+                    surronding.push(left_node!)
+                } catch(err) {}
+                return surronding
+            case "west":
+                try {
+                    let right_node = grid[y][x + 1]
+                    surronding.push(right_node!)
+                } catch(err) {}
+                return surronding
+            case "south":
+                try {
+                    let bottom_node = grid[y + 1][x]
+                    surronding.push(bottom_node!)
+                } catch(err) {}
+                return surronding
+            case "north":
+                try {
+                    let top_node = grid[y - 1][x]
+                    surronding.push(top_node!)
+                } catch(err) {}
+                return surronding
+        }
+    }
 
     try {
         let left_node = grid[y][x - 1]
-        if (left_node !== undefined && left_node.traversable) surronding.push(grid[y][x - 1])
+        if (left_node !== undefined && (left_node.traversable || can_node_enter_finish(node, left_node))) surronding.push(grid[y][x - 1])
     } catch(err) { }
     
     try {
         let right_node = grid[y][x + 1]
-        if (right_node !== undefined  && right_node.traversable) surronding.push(grid[y][x + 1])
+        if (right_node !== undefined && (right_node.traversable || can_node_enter_finish(node, right_node))) surronding.push(grid[y][x + 1])
     } catch(err) { }
     
     try {
-        let top_node = grid[y + 1][x]
-        if (top_node !== undefined  && top_node.traversable) surronding.push(grid[y + 1][x])
+        let bottom_node = grid[y + 1][x]
+        if (bottom_node !== undefined && (bottom_node.traversable || can_node_enter_finish(node, bottom_node))) surronding.push(grid[y + 1][x])
     } catch(err) { }
     
     try {
-        let bottom_node = grid[y - 1][x]
-        if (bottom_node !== undefined  && bottom_node.traversable) surronding.push(grid[y - 1][x])
+        let top_node = grid[y - 1][x]
+        if (top_node !== undefined && (top_node.traversable || can_node_enter_finish(node, top_node))) surronding.push(grid[y - 1][x])
     } catch(err) { }
 
     return surronding
+}
+
+function can_node_enter_finish(node: SearchNode, potential_finish: SearchNode): boolean {
+    if (!potential_finish.is_destination) return false
+
+    const fin_x = potential_finish.x
+    const fin_y = potential_finish.y
+
+    switch (potential_finish.direction) {
+        case "north":
+            return node.x === fin_x && node.y === fin_y + 1
+        case "south":
+            return node.x === fin_x && node.y === fin_y - 1
+        case "east":
+            return node.x === fin_x - 1 && node.y === fin_y
+        case "west":
+            return node.x === fin_x + 1 && node.y === fin_y
+        default:
+            return false
+    }
 }
 
 function distance_between_two_nodes(first: SearchNode, second: SearchNode): number {
@@ -94,32 +147,32 @@ function distance_between_two_nodes(first: SearchNode, second: SearchNode): numb
     return Math.abs(x_diff) + Math.abs(y_diff)
 }
 
-let grid: SearchNode[][] = [
-    [
-        { x:0, y:0, f_cost: 0, traversable: true},
-        { x:1, y:0, f_cost: 0, traversable: true},
-        { x:2, y:0, f_cost: 0, traversable: true},
-        { x:3, y:0, f_cost: 0, traversable: false},
-    ],
-    [
-        { x:0, y:1, f_cost: 0, traversable: true},
-        { x:1, y:1, f_cost: 0, traversable: true},
-        { x:2, y:1, f_cost: 0, traversable: true},
-        { x:3, y:1, f_cost: 0, traversable: true},
-    ],
-    [
-        { x:0, y:2, f_cost: 0, traversable: true},
-        { x:1, y:2, f_cost: 0, traversable: true},
-        { x:2, y:2, f_cost: 0, traversable: false},
-        { x:3, y:2, f_cost: 0, traversable: true},
-    ],
-    [
-        { x:0, y:3, f_cost: 0, traversable: false},
-        { x:1, y:3, f_cost: 0, traversable: true},
-        { x:2, y:3, f_cost: 0, traversable: false},
-        { x:3, y:3, f_cost: 0, traversable: true},
-    ]
-]
+// let grid: SearchNode[][] = [
+//     [
+//         { x:0, y:0, f_cost: 0, traversable: true},
+//         { x:1, y:0, f_cost: 0, traversable: true},
+//         { x:2, y:0, f_cost: 0, traversable: true},
+//         { x:3, y:0, f_cost: 0, traversable: false},
+//     ],
+//     [
+//         { x:0, y:1, f_cost: 0, traversable: true},
+//         { x:1, y:1, f_cost: 0, traversable: true},
+//         { x:2, y:1, f_cost: 0, traversable: true},
+//         { x:3, y:1, f_cost: 0, traversable: true},
+//     ],
+//     [
+//         { x:0, y:2, f_cost: 0, traversable: true},
+//         { x:1, y:2, f_cost: 0, traversable: true},
+//         { x:2, y:2, f_cost: 0, traversable: false},
+//         { x:3, y:2, f_cost: 0, traversable: true},
+//     ],
+//     [
+//         { x:0, y:3, f_cost: 0, traversable: false},
+//         { x:1, y:3, f_cost: 0, traversable: true},
+//         { x:2, y:3, f_cost: 0, traversable: false},
+//         { x:3, y:3, f_cost: 0, traversable: true},
+//     ]
+// ]
 
 // let start = grid[0][0]
 // let finish = grid[3][3]

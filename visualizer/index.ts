@@ -3,7 +3,7 @@ import { connection_between_squares_on_grid } from "./node_connector"
 export type NodeType = 'empty' | 'input' | 'splitter' | 'output' | 'connector'
 
 export interface Square {
-    type: string
+    type: ' ' | 'I' | 'S' | 'O' | 'C'
     x: number
     y: number
 }
@@ -22,14 +22,11 @@ export interface FactorioNode {
     squares: Square[]
 }
 
-// Simplest possible example
 // const input: FactorioNode[] = [
-//     { id: 0, type: 'input', connection: [1], connected: [], squares: [] },
-//     { id: 1, type: 'splitter', connection: [2, 3], connected: [], squares: [] },
-//     { id: 2, type: 'output', connection: [], connected: [], squares: [] },
-//     { id: 3, type: 'output', connection: [], connected: [], squares: [] },
+//     { id: 0, type: 'input', connection: [1], connected_to: [], squares: [], connection_from: [] },
+//     { id: 1, type: 'splitter', connection: [2], connected_to: [], squares: [], connection_from: [] },
+//     { id: 2, type: 'output', connection: [], connected_to: [], squares: [], connection_from: [] },
 // ]
-
 
 // const input: FactorioNode[] = [
 //     { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
