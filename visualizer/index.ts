@@ -31,26 +31,26 @@ export interface FactorioNode {
 // ]
 
 
-const input: FactorioNode[] = [
-    { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 2, type: 'input', connection: [ 5 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 3, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 5, type: 'splitter', connection: [ 7, 8 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 6, type: 'splitter', connection: [ 9, 10], squares: [], connected_to: [], connection_from: [] },
-    { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 9, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 10, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
-  ]
-
 // const input: FactorioNode[] = [
-//     { id: 0, type: 'input', connection: [2], connected_to: [], squares: [], connection_from: [] },
-//     { id: 1, type: 'input', connection: [2], connected_to: [], squares: [], connection_from: [] },
-//     { id: 2, type: 'splitter', connection: [3], connected_to: [], squares: [], connection_from: [] },
-//     { id: 3, type: 'output', connection: [], connected_to: [], squares: [], connection_from: [] },
-// ]
+//     { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 2, type: 'input', connection: [ 5 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 3, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 5, type: 'splitter', connection: [ 7, 8 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 6, type: 'splitter', connection: [ 9, 10], squares: [], connected_to: [], connection_from: [] },
+//     { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 9, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 10, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
+//   ]
+
+const input: FactorioNode[] = [
+    { id: 0, type: 'input', connection: [1], connected_to: [], squares: [], connection_from: [] },
+    { id: 1, type: 'splitter', connection: [2], connected_to: [], squares: [], connection_from: [] },
+    { id: 2, type: 'splitter', connection: [3, 1], connected_to: [], squares: [], connection_from: [] },
+    { id: 3, type: 'output', connection: [], connected_to: [], squares: [], connection_from: [] },
+]
 
 const x_gap = 4
 const y_gap = 4
