@@ -16,8 +16,8 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
     let closed_nodes: SearchNode[] = [];
     let current_node: SearchNode | undefined = undefined
 
-    let start_node = get_adjacent_node_from_node_with_direction(start, grid, 'exiting')
-    let target_node = get_adjacent_node_from_node_with_direction(start, grid, 'entering')
+    let start_node = start.direction !== undefined ? get_adjacent_node_from_node_with_direction(start, grid, 'exiting') : start
+    let target_node = finish.direction !== undefined ? get_adjacent_node_from_node_with_direction(finish, grid, 'entering') : finish
 
     open_nodes.push(start_node);
 

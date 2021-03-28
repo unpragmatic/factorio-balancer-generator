@@ -33,8 +33,8 @@ function search_node_from_square(square: Square, is_finish=false, is_start=false
         is_destination: is_finish,
         f_cost: 0,
         // Only splitters and outputs have a direction, currently the direction is always south
-        // direction: square.type === ('S' || 'O') ? 'south' : undefined
-        direction: 'south'
+        direction: square.type === 'S' ? 'south' : undefined
+        //direction: 'south'
     }
 }
 
