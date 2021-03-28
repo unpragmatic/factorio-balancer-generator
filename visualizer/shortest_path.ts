@@ -1,3 +1,4 @@
+import { notDeepEqual } from "node:assert";
 
 export interface SearchNode {
     x: number
@@ -15,7 +16,10 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
     let closed_nodes: SearchNode[] = [];
     let current_node: SearchNode | undefined = undefined
 
-    open_nodes.push(start);
+    let start_node = get_adjacent_node_from_node_with_direction(start, grid, 'exiting')
+    let target_node = get_adjacent_node_from_node_with_direction(start, grid, 'entering')
+
+    open_nodes.push(start_node);
 
     while(open_nodes.length > 0) {
         // Find node with lowest f_cost in the open_nodes
@@ -26,7 +30,7 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
         open_nodes = open_nodes.filter(node => node !== current_node);
         closed_nodes.push(current_node);
 
-        if (current_node.x == finish.x && current_node.y == finish.y) {
+        if (current_node.x == target_node.x && current_node.y == target_node.y) {
              break; 
         }
 
@@ -37,8 +41,8 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
         for (const surrounding_node of surronding_nodes) {
             if (closed_nodes.includes(surrounding_node)) { continue; }
 
-            let distance_from_start = distance_between_two_nodes(surrounding_node, start);
-            let distance_from_finish = distance_between_two_nodes(surrounding_node, finish);
+            let distance_from_start = distance_between_two_nodes(surrounding_node, start_node);
+            let distance_from_finish = distance_between_two_nodes(surrounding_node, target_node);
 
             let calulcated_f_cost = distance_from_start + distance_from_finish;
 
@@ -66,77 +70,100 @@ function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): S
     const x = node.x
     const y = node.y
     
-    // The next node after a starting point must go in the direction of the starting point
-    if (node.is_start) {
-        switch (node.direction) {
-            case "east":
-                try {
-                    let left_node = grid[y][x - 1]
-                    surronding.push(left_node!)
-                } catch(err) {}
-                return surronding
-            case "west":
-                try {
-                    let right_node = grid[y][x + 1]
-                    surronding.push(right_node!)
-                } catch(err) {}
-                return surronding
-            case "south":
-                try {
-                    let bottom_node = grid[y + 1][x]
-                    surronding.push(bottom_node!)
-                } catch(err) {}
-                return surronding
-            case "north":
-                try {
-                    let top_node = grid[y - 1][x]
-                    surronding.push(top_node!)
-                } catch(err) {}
-                return surronding
-        }
-    }
+    // // The next node after a starting point must go in the direction of the starting point
+    // if (node.is_start) {
+    //     switch (node.direction) {
+    //         case "east":
+    //             try {
+    //                 let left_node = grid[y][x - 1]
+    //                 surronding.push(left_node!)
+    //             } catch(err) {}
+    //             return surronding
+    //         case "west":
+    //             try {
+    //                 let right_node = grid[y][x + 1]
+    //                 surronding.push(right_node!)
+    //             } catch(err) {}
+    //             return surronding
+    //         case "south":
+    //             try {
+    //                 let bottom_node = grid[y + 1][x]
+    //                 surronding.push(bottom_node!)
+    //             } catch(err) {}
+    //             return surronding
+    //         case "north":
+    //             try {
+    //                 let top_node = grid[y - 1][x]
+    //                 surronding.push(top_node!)
+    //             } catch(err) {}
+    //             return surronding
+    //     }
+    // }
 
     try {
         let left_node = grid[y][x - 1]
-        if (left_node !== undefined && (left_node.traversable || can_node_enter_finish(node, left_node))) surronding.push(grid[y][x - 1])
+        if (left_node !== undefined && left_node.traversable) surronding.push(grid[y][x - 1])
     } catch(err) { }
     
     try {
         let right_node = grid[y][x + 1]
-        if (right_node !== undefined && (right_node.traversable || can_node_enter_finish(node, right_node))) surronding.push(grid[y][x + 1])
+        if (right_node !== undefined && right_node.traversable) surronding.push(grid[y][x + 1])
     } catch(err) { }
     
     try {
         let bottom_node = grid[y + 1][x]
-        if (bottom_node !== undefined && (bottom_node.traversable || can_node_enter_finish(node, bottom_node))) surronding.push(grid[y + 1][x])
+        if (bottom_node !== undefined && bottom_node.traversable) surronding.push(grid[y + 1][x])
     } catch(err) { }
     
     try {
         let top_node = grid[y - 1][x]
-        if (top_node !== undefined && (top_node.traversable || can_node_enter_finish(node, top_node))) surronding.push(grid[y - 1][x])
+        if (top_node !== undefined && top_node.traversable) surronding.push(grid[y - 1][x])
     } catch(err) { }
 
     return surronding
 }
 
-function can_node_enter_finish(node: SearchNode, potential_finish: SearchNode): boolean {
-    if (!potential_finish.is_destination) return false
+// function can_node_enter_finish(node: SearchNode, potential_finish: SearchNode): boolean {
+//     if (!potential_finish.is_destination) return false
 
-    const fin_x = potential_finish.x
-    const fin_y = potential_finish.y
+//     const fin_x = potential_finish.x
+//     const fin_y = potential_finish.y
 
-    switch (potential_finish.direction) {
-        case "north":
-            return node.x === fin_x && node.y === fin_y + 1
-        case "south":
-            return node.x === fin_x && node.y === fin_y - 1
-        case "east":
-            return node.x === fin_x - 1 && node.y === fin_y
-        case "west":
-            return node.x === fin_x + 1 && node.y === fin_y
-        default:
-            return false
+//     switch (potential_finish.direction) {
+//         case "north":
+//             return node.x === fin_x && node.y === fin_y + 1
+//         case "south":
+//             return node.x === fin_x && node.y === fin_y - 1
+//         case "east":
+//             return node.x === fin_x - 1 && node.y === fin_y
+//         case "west":
+//             return node.x === fin_x + 1 && node.y === fin_y
+//         default:
+//             return false
+//     }
+// }
+
+function get_adjacent_node_from_node_with_direction(node: SearchNode, grid: SearchNode[][], connection_type: 'entering' | 'exiting'): SearchNode {
+
+    const displacement_map = {
+        'entering': 1,
+        'exiting': -1
     }
+    const displacement_factor = displacement_map[connection_type]
+    
+    switch (node.direction) {
+    case "north":
+        return grid[node.y + displacement_factor][node.x]
+    case "south":
+        return grid[node.y - displacement_factor][node.x]
+    case "east":
+        return grid[node.y][node.x - displacement_factor]
+    case "west":
+        return grid[node.y][node.x + displacement_factor]
+    default:
+        throw Error("Invalid node direction")
+    }
+
 }
 
 function distance_between_two_nodes(first: SearchNode, second: SearchNode): number {
