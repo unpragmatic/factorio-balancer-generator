@@ -16,8 +16,10 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
     let closed_nodes: SearchNode[] = [];
     let current_node: SearchNode | undefined = undefined
 
-    let start_node = start.direction !== undefined ? get_adjacent_node_from_node_with_direction(start, grid, 'exiting') : start
-    let target_node = finish.direction !== undefined ? get_adjacent_node_from_node_with_direction(finish, grid, 'entering') : finish
+    // let start_node = start.direction !== undefined ? get_adjacent_node_from_node_with_direction(start, grid, 'exiting') : start
+    // let target_node = finish.direction !== undefined ? get_adjacent_node_from_node_with_direction(finish, grid, 'entering') : finish
+    let start_node = get_adjacent_node_from_node_with_direction(start, grid, 'exiting')
+    let target_node = get_adjacent_node_from_node_with_direction(finish, grid, 'entering')
 
     open_nodes.push(start_node);
 
@@ -55,12 +57,13 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
 
     var path_to_finish: SearchNode[] = []
     
-    while (current_node !== undefined && current_node.parent !== undefined) {
+    while (current_node !== undefined) {
         path_to_finish.unshift(current_node)
         current_node = current_node.parent
     }
 
-    return path_to_finish.slice(0, -1);
+    // return path_to_finish.slice(0, -1);
+    return path_to_finish
 }
 
 function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): SearchNode[] {
