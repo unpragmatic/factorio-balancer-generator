@@ -33,7 +33,7 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
         closed_nodes.push(current_node);
 
         if (current_node.x == target_node.x && current_node.y == target_node.y) {
-             break; 
+             break;
         }
 
         // Check the surronding nodes
@@ -42,16 +42,20 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
         // Evalute the f_cost of the nodes
         for (const surrounding_node of surronding_nodes) {
             if (closed_nodes.includes(surrounding_node)) { continue; }
-
-            let distance_from_start = distance_between_two_nodes(surrounding_node, start_node);
+            
+            // Caluclate number of movement steps
+            const distance_from_start = calculate_depth_of_node_from_first_parent(current_node)
+            // let distance_from_start = distance_between_two_nodes(surrounding_node, start_node);
             let distance_from_finish = distance_between_two_nodes(surrounding_node, target_node);
 
             let calulcated_f_cost = distance_from_start + distance_from_finish;
-
-            surrounding_node.f_cost = calulcated_f_cost;
-            surrounding_node.parent = current_node;
-
-            open_nodes.push(surrounding_node);
+            
+            if (surrounding_node.f_cost === 0 || surrounding_node.f_cost > calulcated_f_cost) {
+                surrounding_node.f_cost = calulcated_f_cost;
+                surrounding_node.parent = current_node;
+                open_nodes.push(surrounding_node);
+            }
+        
         }
     }
 
@@ -73,36 +77,6 @@ function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): S
     const x = node.x
     const y = node.y
     
-    // // The next node after a starting point must go in the direction of the starting point
-    // if (node.is_start) {
-    //     switch (node.direction) {
-    //         case "east":
-    //             try {
-    //                 let left_node = grid[y][x - 1]
-    //                 surronding.push(left_node!)
-    //             } catch(err) {}
-    //             return surronding
-    //         case "west":
-    //             try {
-    //                 let right_node = grid[y][x + 1]
-    //                 surronding.push(right_node!)
-    //             } catch(err) {}
-    //             return surronding
-    //         case "south":
-    //             try {
-    //                 let bottom_node = grid[y + 1][x]
-    //                 surronding.push(bottom_node!)
-    //             } catch(err) {}
-    //             return surronding
-    //         case "north":
-    //             try {
-    //                 let top_node = grid[y - 1][x]
-    //                 surronding.push(top_node!)
-    //             } catch(err) {}
-    //             return surronding
-    //     }
-    // }
-
     try {
         let left_node = grid[y][x - 1]
         if (left_node !== undefined && left_node.traversable) surronding.push(grid[y][x - 1])
@@ -126,25 +100,15 @@ function get_surronding_nodes_in_grid(node: SearchNode, grid: SearchNode[][]): S
     return surronding
 }
 
-// function can_node_enter_finish(node: SearchNode, potential_finish: SearchNode): boolean {
-//     if (!potential_finish.is_destination) return false
-
-//     const fin_x = potential_finish.x
-//     const fin_y = potential_finish.y
-
-//     switch (potential_finish.direction) {
-//         case "north":
-//             return node.x === fin_x && node.y === fin_y + 1
-//         case "south":
-//             return node.x === fin_x && node.y === fin_y - 1
-//         case "east":
-//             return node.x === fin_x - 1 && node.y === fin_y
-//         case "west":
-//             return node.x === fin_x + 1 && node.y === fin_y
-//         default:
-//             return false
-//     }
-// }
+function calculate_depth_of_node_from_first_parent(node: SearchNode): number {
+    let steps = 0
+    let current_node: SearchNode | undefined = node
+    while (current_node !== undefined) {
+        steps++
+        current_node = current_node.parent
+    }
+    return steps
+}
 
 function get_adjacent_node_from_node_with_direction(node: SearchNode, grid: SearchNode[][], connection_type: 'entering' | 'exiting'): SearchNode {
 
@@ -176,34 +140,3 @@ function distance_between_two_nodes(first: SearchNode, second: SearchNode): numb
 
     return Math.abs(x_diff) + Math.abs(y_diff)
 }
-
-// let grid: SearchNode[][] = [
-//     [
-//         { x:0, y:0, f_cost: 0, traversable: true},
-//         { x:1, y:0, f_cost: 0, traversable: true},
-//         { x:2, y:0, f_cost: 0, traversable: true},
-//         { x:3, y:0, f_cost: 0, traversable: false},
-//     ],
-//     [
-//         { x:0, y:1, f_cost: 0, traversable: true},
-//         { x:1, y:1, f_cost: 0, traversable: true},
-//         { x:2, y:1, f_cost: 0, traversable: true},
-//         { x:3, y:1, f_cost: 0, traversable: true},
-//     ],
-//     [
-//         { x:0, y:2, f_cost: 0, traversable: true},
-//         { x:1, y:2, f_cost: 0, traversable: true},
-//         { x:2, y:2, f_cost: 0, traversable: false},
-//         { x:3, y:2, f_cost: 0, traversable: true},
-//     ],
-//     [
-//         { x:0, y:3, f_cost: 0, traversable: false},
-//         { x:1, y:3, f_cost: 0, traversable: true},
-//         { x:2, y:3, f_cost: 0, traversable: false},
-//         { x:3, y:3, f_cost: 0, traversable: true},
-//     ]
-// ]
-
-// let start = grid[0][0]
-// let finish = grid[3][3]
-// console.log(shortest_path_between_nodes(start, finish, grid))
