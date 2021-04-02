@@ -28,35 +28,43 @@ export interface FactorioNode {
 //     { id: 2, type: 'output', connection: [], connected_to: [], squares: [], connection_from: [] },
 // ]
 
+const input: FactorioNode[] = [
+    // { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+    // { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 0, type: 'input', connection: [ 3 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+    // { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 2, type: 'splitter', connection: [ 4, 5 ], squares: [], connected_to: [], connection_from: [] },
+    { id: 3, type: 'splitter', connection: [ 6, 7], squares: [], connected_to: [], connection_from: [] },
+    // { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    // { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    { id: 4, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    { id: 5, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    { id: 6, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+    { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
+  ]
+
 // const input: FactorioNode[] = [
-//     // { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-//     // { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 0, type: 'input', connection: [ 3 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 1, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-//     // { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 2, type: 'splitter', connection: [ 4, 5 ], squares: [], connected_to: [], connection_from: [] },
-//     { id: 3, type: 'splitter', connection: [ 6, 7], squares: [], connected_to: [], connection_from: [] },
-//     // { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     // { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     { id: 4, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     { id: 5, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     { id: 6, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-//     { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
+//     { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 1, type: 'input', connection: [11], squares: [], connected_to: [], connection_from: [] },
+//     { id: 2, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 3, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
+//     { id: 5, type: 'splitter', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 6, type: 'splitter', connection: [9, 10], squares: [], connected_to: [], connection_from: [] },
+//     { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 9, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 10, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
+//     { id: 11, type: 'splitter', connection: [12,12], squares: [], connected_to: [], connection_from: [] },
+//     { id: 12, type: 'splitter', connection: [11], squares: [], connected_to: [], connection_from: [] },
 //   ]
 
-const input: FactorioNode[] = [
-    { id: 0, type: 'input', connection: [ 4 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 1, type: 'input', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 2, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 3, type: 'input', connection: [ 6 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 4, type: 'splitter', connection: [ 5, 5 ], squares: [], connected_to: [], connection_from: [] },
-    { id: 5, type: 'splitter', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 6, type: 'splitter', connection: [9, 10], squares: [], connected_to: [], connection_from: [] },
-    { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 8, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 9, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] },
-    { id: 10, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
-  ]
+// const input: FactorioNode[] = [
+//         { id: 0, type: 'input', connection: [1], squares: [], connected_to: [], connection_from: [] },
+//         { id: 1, type: 'splitter', connection: [2], squares: [], connected_to: [], connection_from: [] },
+//         { id: 2, type: 'splitter', connection: [1], squares: [], connected_to: [], connection_from: [] }
+//     ]
 
 //   const input: FactorioNode[] = [
 //     { id: 0, type: 'input', connection: [ 1 ], squares: [], connected_to: [], connection_from: [] },
@@ -90,7 +98,7 @@ function grid_filled(input: FactorioNode[], grid: Grid) {
 function grid_with_empty_squares(grid: Grid) {
     var mutated_grid: Grid = grid
 
-    let squares = grid.squares
+    let squares = mutated_grid.squares;
     let max_y = squares.length
     let max_x = Math.max(...squares.map(row => row.length))
 
@@ -183,24 +191,6 @@ function grid_with_connection_between(grid: Grid, first_square: Square, second_s
             mutated_grid = grid_with_connector_node(mutated_grid, coord.x, coord.y)
         )
 
-    // const x1 = first_square.x
-    // const y1 = first_square.y
-
-    // const x2 = second_square.x
-    // const y2 = second_square.y
-
-    // const x_diff = x2 - x1
-    // const y_diff = y2 - y1
-
-    // for (let y = 1; y < y_diff; y++) {
-    //     mutated_grid = grid_with_node_of_type(mutated_grid, 'connector', x1, y1 + y)
-    // }
-
-    // for (let x = 0; x <= Math.abs(x_diff); x++) {
-    //     const x_start = x_diff > 0 ? x1 : x2
-    //     mutated_grid = grid_with_node_of_type(mutated_grid, 'connector', x_start + x, ((y_diff + y1) - 1))
-    // }
-
     return mutated_grid
 }
 
@@ -216,20 +206,25 @@ function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y
     switch (type) {
         case 'connector':
             mutated_grid = grid_with_connector_node(mutated_grid, pos_x, pos_y)
-            return mutated_grid;
+            break;
         case 'input':
             mutated_grid = grid_with_input_node(mutated_grid, pos_x, pos_y)
-            return mutated_grid;
+            break;
         case 'splitter':
             mutated_grid = grid_with_splitter_node(mutated_grid, pos_x, pos_y)
-            return mutated_grid;
+            break;
         case 'output':
             mutated_grid = grid_with_output_node(mutated_grid, pos_x, pos_y)
-            return mutated_grid;
+            break;
         case 'empty':
             mutated_grid = grid_with_empty_square(mutated_grid, pos_x, pos_y)
-
+            return mutated_grid;
     }
+
+    // Fills out an empty row 'one ahead' to ensure enough room for potential connections
+    if (!mutated_grid.squares[pos_y + 1]){
+        mutated_grid.squares[pos_y + 1] = []
+    } 
 
     return mutated_grid
 }
@@ -285,48 +280,3 @@ const filled_grid = grid_filled(input, {
 const complete_grid = grid_with_empty_squares(filled_grid)
 const connected_grid = grid_connected(complete_grid)
 display_grid(connected_grid)
-
-// function calculate_connection_depth_of_input(input: Factorio_Node[]){
-
-//     var node_stack: Stack<Factorio_Node> = new Stack<Factorio_Node>()
-//     var depth: number = 0
-//     var max_depth: number = 0
-
-//     // Push all input nodes to stack
-//     const input_nodes: Factorio_Node[] = input.filter((node) => {
-//         if (max_depth < depth) { max_depth = depth }
-//         node_stack.push(node)
-//         while (!node_stack.is_empty) {
-//             node = node_stack.pop()
-//             depth += 1
-//             node.connection.forEach(connection => {
-//                 node_stack.push(input[connection])
-//             })
-//             depth -= 1
-//         }
-//     })
-
-//     return max_depth
-// }
-
-// function initialize_empty_grid(size_x: number, size_y: number): Grid {
-//     var grid: Grid = { squares: [], size_x: size_x, size_y: size_y }
-//     for (let i = 0; i < size_x; i++){
-//         grid.squares[i] = []
-//         for (let j = 0; j < size_y; j++){
-//             grid.squares[i][j] = {type: ' '}
-//         }
-//     }
-//     return grid
-// }
-
-// function squares_are_empty(squares: Square[]) {
-//     squares.forEach(square => {
-//         if (square.type != ' ') {
-//             return false
-//         }
-//     });
-//     return true
-// }
-
-// const empty_grid = initialize_empty_grid()
