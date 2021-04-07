@@ -1,3 +1,4 @@
+
 export interface SearchNode {
     x: number
     y: number
