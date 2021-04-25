@@ -18,5 +18,3 @@ export default function generate(inputs: number, outputs: number, connectors: nu
 
     return visualize(factorioNodes)
 }
-
-generate(3, 3, 4)
