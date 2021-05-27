@@ -1,11 +1,13 @@
-import { connection_between_squares_on_grid } from "./node_connector"
+import { connection_between_squares_on_grid, Coordinate } from "./node_connector"
 
 export type NodeType = 'empty' | 'input' | 'splitter' | 'output' | 'connector'
 
 export interface Square {
     type: ' ' | 'I' | 'S' | 'O' | 'C'
     x: number
-    y: number
+    y: number,
+    direction: 'N' | 'S' | 'E' | 'W' | '?'
+    isSecondary?: boolean
 }
 
 export interface Grid {
@@ -146,12 +148,35 @@ function grid_with_connection_between(grid: Grid, first_square: Square, second_s
     var mutated_grid: Grid = grid
     
     let coords = connection_between_squares_on_grid(first_square, second_square, grid.squares)
-    
-    coords.forEach(coord => 
-            mutated_grid = grid_with_connector_node(mutated_grid, coord.x, coord.y)
-        )
+
+    for (let i = 0; i < coords.length; i++) {
+        // The second parameter returns the next coordinate in the list unless at the end of the list where it will use the connecting square instead
+        let coord = coords[i]
+        let direction = direction_from_coord_delta(coord, i < coords.length - 1 ? coords[ i + 1] : { x: second_square.x, y: second_square.y})
+        mutated_grid = grid_with_connector_node(mutated_grid, coord.x, coord.y, direction)
+    }
 
     return mutated_grid
+}
+
+function direction_from_coord_delta(coord: Coordinate, target_coord: Coordinate): Square["direction"] {
+
+    const delta_x = coord.x - target_coord.x
+    const delta_y = coord.y - target_coord.y
+
+    if (delta_x > 0) {
+        return 'W'
+    } else if (delta_x < 0) {
+        return 'E'
+    }
+
+    if (delta_y > 0) {
+        return 'N'
+    } else if (delta_y < 1) {
+        return 'S'
+    }
+
+    return '?'
 }
 
 function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y: number): Grid {
@@ -165,7 +190,7 @@ function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y
 
     switch (type) {
         case 'connector':
-            mutated_grid = grid_with_connector_node(mutated_grid, pos_x, pos_y)
+            mutated_grid = grid_with_connector_node(mutated_grid, pos_x, pos_y, '?')
             break;
         case 'input':
             mutated_grid = grid_with_input_node(mutated_grid, pos_x, pos_y)
@@ -189,36 +214,36 @@ function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y
     return mutated_grid
 }
 
-function grid_with_connector_node(grid: Grid, pos_x: number, pos_y: number): Grid {
+function grid_with_connector_node(grid: Grid, pos_x: number, pos_y: number, direction: Square["direction"]): Grid {
     var mutated_grid: Grid = grid
-    mutated_grid.squares[pos_y][pos_x] = { type: 'C', x: pos_x, y: pos_y }
+    mutated_grid.squares[pos_y][pos_x] = { type: 'C', x: pos_x, y: pos_y, direction: direction }
     return mutated_grid
 }
 
 function grid_with_input_node(grid: Grid, pos_x: number, pos_y: number): Grid {
     var mutated_grid: Grid = grid
-    mutated_grid.squares[pos_y][pos_x] = { type: 'I', x: pos_x, y: pos_y }
+    mutated_grid.squares[pos_y][pos_x] = { type: 'I', x: pos_x, y: pos_y, direction: 'S' }
     return mutated_grid
 }
 
 function grid_with_splitter_node(grid: Grid, pos_x: number, pos_y: number): Grid {
     var mutated_grid: Grid = grid
 
-    mutated_grid.squares[pos_y][pos_x] = { type: 'S', x: pos_x, y: pos_y }
-    mutated_grid.squares[pos_y][pos_x + 1] = { type: 'S', x: pos_x + 1, y: pos_y }
+    mutated_grid.squares[pos_y][pos_x] = { type: 'S', x: pos_x, y: pos_y, direction: 'S' }
+    mutated_grid.squares[pos_y][pos_x + 1] = { type: 'S', x: pos_x + 1, y: pos_y, direction: 'S', isSecondary: true }
 
     return mutated_grid
 }
 
 function grid_with_output_node(grid: Grid, pos_x: number, pos_y: number): Grid {
     var mutated_grid: Grid = grid
-    mutated_grid.squares[pos_y][pos_x] = { type: 'O', x: pos_x, y: pos_y }
+    mutated_grid.squares[pos_y][pos_x] = { type: 'O', x: pos_x, y: pos_y, direction: 'S' }
     return mutated_grid
 }
 
 function grid_with_empty_square(grid: Grid, pos_x: number, pos_y: number): Grid {
     var mutated_grid: Grid = grid
-    mutated_grid.squares[pos_y][pos_x] = { type: ' ', x: pos_x, y: pos_y }
+    mutated_grid.squares[pos_y][pos_x] = { type: ' ', x: pos_x, y: pos_y, direction: '?' }
     return mutated_grid
 }
 
@@ -239,5 +264,8 @@ export function visualize(input: FactorioNode[]): Grid {
         nodes: []
     })
     const complete_grid = grid_with_empty_squares(filled_grid)
-    return grid_connected(complete_grid)
-}
+    const connected_grid = grid_connected(complete_grid)
+    console.log(connected_grid.squares)
+    return connected_grid
+}   
+

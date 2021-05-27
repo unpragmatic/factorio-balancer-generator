@@ -1,6 +1,6 @@
 interface NodeInfo {
     id: number
-    type: 'input' | 'output' | 'connector'
+    type: 'input' | 'output' | 'splitter'
     connection: number[]
 }
 
@@ -24,7 +24,7 @@ function generate(inputs: number, outputs: number, connectors: number): Graph {
     }
 
     for (let i = 0; i < numberOfconnectors; i++) {
-        graph.push({ id: nodeCount++, type: 'connector', connection: [] })
+        graph.push({ id: nodeCount++, type: 'splitter', connection: [] })
     }
 
     for (let i = 0; i < outputs; i++) {
@@ -66,10 +66,10 @@ function generate(inputs: number, outputs: number, connectors: number): Graph {
     //         { id: 0, type: 'input', connection: [3] }, 
     //         { id: 1, type: 'input', connection: [3] }, 
     //         { id: 2, type: 'input', connection: [4] }, 
-    //         { id: 3, type: 'connector', connection: [5, 6] }, 
-    //         { id: 4, type: 'connector', connection: [5, 6] }, 
-    //         { id: 5, type: 'connector', connection: [7, 4] }, 
-    //         { id: 6, type: 'connector', connection: [8, 9] }, 
+    //         { id: 3, type: 'splitter', connection: [5, 6] }, 
+    //         { id: 4, type: 'splitter', connection: [5, 6] }, 
+    //         { id: 5, type: 'splitter', connection: [7, 4] }, 
+    //         { id: 6, type: 'splitter', connection: [8, 9] }, 
     //         { id: 7, type: 'output', connection: [ ] },
     //         { id: 8, type: 'output', connection: [ ] },
     //         { id: 9, type: 'output', connection: [ ] }
@@ -79,14 +79,14 @@ function generate(inputs: number, outputs: number, connectors: number): Graph {
 // function generate(inputs: number, outputs: number): Graph { 
 //     return [
 //         { id: 0, type: 'input', connection: [1] },
-//         { id: 1, type: 'connector', connection: [1] },
+//         { id: 1, type: 'splitter', connection: [1] },
 //         { id: 2, type: 'output', connection: [] }
 //     ]
 // }
 
 
 function getInputAndConnectionNodes(graph: Graph): NodeInfo[] {
-    return graph.filter(node => node.type === 'input' || node.type === 'connector')
+    return graph.filter(node => node.type === 'input' || node.type === 'splitter')
 }
 
 function getOutputNodes(graph: Graph): NodeInfo[] {
