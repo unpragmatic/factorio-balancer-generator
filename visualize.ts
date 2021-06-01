@@ -1,3 +1,4 @@
+import generate from "."
 import { connection_between_squares_on_grid, Coordinate } from "./node_connector"
 
 export type NodeType = 'empty' | 'input' | 'splitter' | 'output' | 'connector'
@@ -252,7 +253,7 @@ function display_grid(grid: Grid) {
         var formatted_line: string = ""
         for (let j = 0; j < grid.squares[i].length; j++) {
             const square = grid.squares[i][j]
-            formatted_line += (square?.type ?? ' ') + "|"
+            formatted_line += (square?.direction ?? ' ') + "|"
         }
         console.log("|" + formatted_line)
     }
@@ -265,7 +266,6 @@ export function visualize(input: FactorioNode[]): Grid {
     })
     const complete_grid = grid_with_empty_squares(filled_grid)
     const connected_grid = grid_connected(complete_grid)
-    console.log(connected_grid.squares)
+    console.log(display_grid(connected_grid))
     return connected_grid
 }   
-

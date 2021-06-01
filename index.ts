@@ -1,5 +1,6 @@
 import { Grid, visualize, FactorioNode } from "./visualize";
 import { runSimulation } from "./generate"
+import convertGridToFactorioBlueprint from './blueprintConverter'
 
 export default function generate(inputs: number, outputs: number, connectors: number): Grid {
     
@@ -18,3 +19,6 @@ export default function generate(inputs: number, outputs: number, connectors: nu
 
     return visualize(factorioNodes)
 }
+
+let grid = generate(1, 1, 1)
+let blueprint = convertGridToFactorioBlueprint(grid)

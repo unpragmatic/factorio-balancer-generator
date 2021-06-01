@@ -153,6 +153,18 @@ function aboutEqual(a: number, b: number, delta: number) {
 export function runSimulation(inputs: number, outputs: number, connectors: number): Graph {
     let i = 0;
 
+    return [
+            { id: 0, type: 'input', connection: [3] }, 
+            { id: 1, type: 'input', connection: [3] }, 
+            { id: 2, type: 'input', connection: [4] }, 
+            { id: 3, type: 'splitter', connection: [5, 6] }, 
+            { id: 4, type: 'splitter', connection: [7, 8] }, 
+            { id: 5, type: 'output', connection: [ ] },
+            { id: 6, type: 'output', connection: [ ] },
+            { id: 7, type: 'output', connection: [ ] },
+            { id: 8, type: 'output', connection: [ ] }
+    ]
+
     while (true) {
         try {
             const graph = generate(inputs, outputs, connectors);
