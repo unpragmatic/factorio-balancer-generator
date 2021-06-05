@@ -201,7 +201,7 @@ function solve(input: number, output: number, connectors: number, ratios: number
 
 function main() {
 
-    const graph = solve(3, 3, 6, [3, 1, 1], {});
+    const graph = solve(1, 2, 1, [1, 1], {});
     printGraph(graph);
 }
 
