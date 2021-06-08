@@ -1,8 +1,8 @@
-import { Grid, visualize, FactorioNode } from "./visualize";
+import { visualize, FactorioNode } from "./visualize";
 import { runSimulation } from "./generate"
-import convertGridToFactorioBlueprint from './blueprintConverter'
+import convertGridToFactorioBlueprint, { Blueprint } from './blueprintConverter'
 
-export default function generate(inputs: number, outputs: number, connectors: number): Grid {
+export default function generate(inputs: number, outputs: number, connectors: number): Blueprint {
     
     const nodes = runSimulation(inputs, outputs, connectors)
     const factorioNodes: FactorioNode[] = []
@@ -17,8 +17,6 @@ export default function generate(inputs: number, outputs: number, connectors: nu
         })
     })
 
-    return visualize(factorioNodes)
+    const grid = visualize(factorioNodes)
+    return convertGridToFactorioBlueprint(grid)
 }
-
-let grid = generate(1, 1, 1)
-let blueprint = convertGridToFactorioBlueprint(grid)

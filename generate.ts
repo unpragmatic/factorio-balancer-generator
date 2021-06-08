@@ -110,7 +110,7 @@ function simulate(graph: Graph, inputState: number[]) {
         const prev = nodeInputs[nodeId]
         nodeInputs[nodeId] += delta
         if (!Number.isNaN(prev) && Number.isNaN(nodeInputs[nodeId])) {
-            console.log(nodeId, prev, delta, nodeInputs[nodeId])
+            // console.log(nodeId, prev, delta, nodeInputs[nodeId])
         }
         nodeInputsHistory[nodeId].push(nodeInputs[nodeId])
     }
@@ -143,7 +143,7 @@ function simulate(graph: Graph, inputState: number[]) {
 }
 
 function printGraph(graph: Graph) {
-    console.log(graph)
+    // console.log(graph)
 }
 
 function aboutEqual(a: number, b: number, delta: number) {
@@ -154,15 +154,10 @@ export function runSimulation(inputs: number, outputs: number, connectors: numbe
     let i = 0;
 
     return [
-            { id: 0, type: 'input', connection: [3] }, 
-            { id: 1, type: 'input', connection: [3] }, 
-            { id: 2, type: 'input', connection: [4] }, 
-            { id: 3, type: 'splitter', connection: [5, 6] }, 
-            { id: 4, type: 'splitter', connection: [7, 8] }, 
-            { id: 5, type: 'output', connection: [ ] },
-            { id: 6, type: 'output', connection: [ ] },
-            { id: 7, type: 'output', connection: [ ] },
-            { id: 8, type: 'output', connection: [ ] }
+            { id: 0, type: 'input', connection: [1] }, 
+            { id: 1, type: 'splitter', connection: [2, 3] }, 
+            { id: 2, type: 'output', connection: [ ] },
+            { id: 3, type: 'output', connection: [ ] }
     ]
 
     while (true) {

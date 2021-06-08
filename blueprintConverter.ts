@@ -38,6 +38,7 @@ export default function convertGridToFactorioBlueprint(grid: Grid): Blueprint {
         for (let x = 0; x < grid.squares[y].length; x++) {
             const square = grid.squares[y][x]
             if (square.type == ' ') continue
+            if (square.isSecondary) continue
             entities.push(createEntity(entityCount, square))
             entityCount++
         }

@@ -83,7 +83,7 @@ function grid_connected(grid: Grid) {
     grid.nodes.forEach(node => {
         node.connection.forEach(id => {
             var connection_node: FactorioNode | undefined = grid.nodes.find(node => node.id == id)
-            console.log('Connecting node: ', node, ' and: ', connection_node, '.')
+            // console.log('Connecting node: ', node, ' and: ', connection_node, '.')
             if (connection_node) {
                 connect_nodes_on_grid(mutated_grid, node, connection_node)
             }
@@ -255,7 +255,7 @@ function display_grid(grid: Grid) {
             const square = grid.squares[i][j]
             formatted_line += (square?.direction ?? ' ') + "|"
         }
-        console.log("|" + formatted_line)
+        // console.log("|" + formatted_line)
     }
 }
 
@@ -266,6 +266,6 @@ export function visualize(input: FactorioNode[]): Grid {
     })
     const complete_grid = grid_with_empty_squares(filled_grid)
     const connected_grid = grid_connected(complete_grid)
-    console.log(display_grid(connected_grid))
+    // console.log(display_grid(connected_grid))
     return connected_grid
 }   
