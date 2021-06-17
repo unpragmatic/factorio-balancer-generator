@@ -248,14 +248,14 @@ function grid_with_empty_square(grid: Grid, pos_x: number, pos_y: number): Grid 
     return mutated_grid
 }
 
-function display_grid(grid: Grid) {
+export function display_grid(grid: Grid) {
     for (let i = 0; i < grid.squares.length; i++) {
         var formatted_line: string = ""
         for (let j = 0; j < grid.squares[i].length; j++) {
             const square = grid.squares[i][j]
-            formatted_line += (square?.direction ?? ' ') + "|"
+            formatted_line += (square?.type ?? ' ') + "|"
         }
-        // console.log("|" + formatted_line)
+        console.log("|" + formatted_line)
     }
 }
 

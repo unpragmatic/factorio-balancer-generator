@@ -1,7 +1,11 @@
 interface NodeInfo {
     id: number
-    type: 'input' | 'output' | 'splitter'
+    type: 'input' | 'output' | 'connector'
     connection: number[]
+}
+
+export interface SolveOptions {
+    iterationLimit?: Number
 }
 
 type Graph = NodeInfo[]
@@ -24,7 +28,7 @@ function generate(inputs: number, outputs: number, connectors: number): Graph {
     }
 
     for (let i = 0; i < numberOfconnectors; i++) {
-        graph.push({ id: nodeCount++, type: 'splitter', connection: [] })
+        graph.push({ id: nodeCount++, type: 'connector', connection: [] })
     }
 
     for (let i = 0; i < outputs; i++) {
@@ -41,7 +45,6 @@ function generate(inputs: number, outputs: number, connectors: number): Graph {
     const inputsConnected = (): boolean => {
         return inputNodeIds.every(inputNodeId => pathFromToOneOf(inputNodeId, outputNodeIds))
     }
-
     while (!inputsConnected()) {
         const sourceId = getRandomArbitrary(0, graph.length - outputs);
         const destinationId = getRandomArbitrary(0, graph.length);
@@ -66,10 +69,10 @@ function generate(inputs: number, outputs: number, connectors: number): Graph {
     //         { id: 0, type: 'input', connection: [3] }, 
     //         { id: 1, type: 'input', connection: [3] }, 
     //         { id: 2, type: 'input', connection: [4] }, 
-    //         { id: 3, type: 'splitter', connection: [5, 6] }, 
-    //         { id: 4, type: 'splitter', connection: [5, 6] }, 
-    //         { id: 5, type: 'splitter', connection: [7, 4] }, 
-    //         { id: 6, type: 'splitter', connection: [8, 9] }, 
+    //         { id: 3, type: 'connector', connection: [5, 6] }, 
+    //         { id: 4, type: 'connector', connection: [5, 6] }, 
+    //         { id: 5, type: 'connector', connection: [7, 4] }, 
+    //         { id: 6, type: 'connector', connection: [8, 9] }, 
     //         { id: 7, type: 'output', connection: [ ] },
     //         { id: 8, type: 'output', connection: [ ] },
     //         { id: 9, type: 'output', connection: [ ] }
@@ -79,14 +82,14 @@ function generate(inputs: number, outputs: number, connectors: number): Graph {
 // function generate(inputs: number, outputs: number): Graph { 
 //     return [
 //         { id: 0, type: 'input', connection: [1] },
-//         { id: 1, type: 'splitter', connection: [1] },
+//         { id: 1, type: 'connector', connection: [1] },
 //         { id: 2, type: 'output', connection: [] }
 //     ]
 // }
 
 
 function getInputAndConnectionNodes(graph: Graph): NodeInfo[] {
-    return graph.filter(node => node.type === 'input' || node.type === 'splitter')
+    return graph.filter(node => node.type === 'input' || node.type === 'connector')
 }
 
 function getOutputNodes(graph: Graph): NodeInfo[] {
@@ -110,7 +113,7 @@ function simulate(graph: Graph, inputState: number[]) {
         const prev = nodeInputs[nodeId]
         nodeInputs[nodeId] += delta
         if (!Number.isNaN(prev) && Number.isNaN(nodeInputs[nodeId])) {
-            // console.log(nodeId, prev, delta, nodeInputs[nodeId])
+            console.log(nodeId, prev, delta, nodeInputs[nodeId])
         }
         nodeInputsHistory[nodeId].push(nodeInputs[nodeId])
     }
@@ -143,49 +146,116 @@ function simulate(graph: Graph, inputState: number[]) {
 }
 
 function printGraph(graph: Graph) {
-    // console.log(graph)
+    console.log(graph)
 }
 
 function aboutEqual(a: number, b: number, delta: number) {
     return b - delta <= a && a <= b + delta;
 }
 
-export function runSimulation(inputs: number, outputs: number, connectors: number): Graph {
-    let i = 0;
+function arrayAboutEqual(a: number[], b: number[], delta: number): boolean {
+    if (a.length !== b.length) {
+        return false;
+    }
 
-    return [
-            { id: 0, type: 'input', connection: [1] }, 
-            { id: 1, type: 'splitter', connection: [2, 3] }, 
-            { id: 2, type: 'output', connection: [ ] },
-            { id: 3, type: 'output', connection: [ ] }
-    ]
+    return a.every((a_value, a_idx) => aboutEqual(a_value, b[a_idx], delta));
+}
 
+function normalise(array: number[]) {
+    const sum = array.reduce((sum, val) => sum + val, 0);
+    return array.map(v => v / sum);
+}
+
+export function solve(input: number, output: number, connectors: number, ratios: number[], options: SolveOptions) {
+    const normalisedRatios = normalise(ratios);
+
+    const inputStates = Array(input).fill(0)
+        .map((_, idx) => idx)
+        .map(idx => Array(input + output + connectors).fill(0).map((_, innerIdx) => idx === innerIdx ? 1 : 0));
+
+    
+    let iterationCount = 0;
     while (true) {
         try {
-            const graph = generate(inputs, outputs, connectors);
+            const graph = generate(input, output, connectors);
 
-            const inputStates = [
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
-            ]
+            const outputNodeIds = getOutputNodes(graph).map(node => node.id);
 
-            const results = []
-            for (const inputState of inputStates) {
-                const result = simulate(graph, inputState);
-                const target = [1 / 3, 1 / 3, 1 / 3]
+            const results = inputStates
+                .map(inputState => simulate(graph, inputState))
+                .map(result => outputNodeIds.map(outputNodeId => result[outputNodeId]));
+            
+            const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
 
-                results.push(result);
-            }
-
-            const allGood = results.every(result => aboutEqual(result[7], 1 / 3, 0.01) && aboutEqual(result[8], 1 / 3, 0.01) && aboutEqual(result[9], 1 / 3, 0.01))
-            if (allGood) {
-                printGraph(graph)
+            if (graphStatisfiesRatios) {
+                console.log(results)
                 return graph;
             }
         } catch (e) {
-            // console.log(e)
+            
         }
-        i += 1;
+
+        iterationCount += 1;
+        if (iterationCount % 10000 === 0) {
+            process.stdout.write(`\rIteration Count: ${iterationCount}`,)
+        }
+    }
+}
+
+function stepSolve(input: number, output: number, connectors: number) {
+
+    const nextStep = (inputStates: (0 | 1)[][], normalisedRatios: number[]) => () => {
+        try {
+            const graph = generate(input, output, connectors);
+
+            const outputNodeIds = getOutputNodes(graph).map(node => node.id);
+
+            const results = inputStates
+                .map(inputState => simulate(graph, inputState))
+                .map(result => outputNodeIds.map(outputNodeId => result[outputNodeId]));
+            
+            const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
+
+            if (graphStatisfiesRatios) {
+                console.log(results)
+                return graph;
+            }
+        } catch (e) {
+            
+        }
+        return nextStep(inputStates, normalisedRatios)
+    }
+
+    const ratios = Array(output).fill(1)
+    const normalisedRatios = normalise(ratios);
+
+    const inputStates = Array(input).fill(0)
+        .map((_, idx) => idx)
+        .map(idx => Array(input + output + connectors).fill(0).map((_, innerIdx) => idx === innerIdx ? 1 : 0));
+
+    return nextStep(inputStates, normalisedRatios)
+    
+}
+
+export function smartSolve(input: number, output: number): Graph {
+
+    const splittersLimit = 10;
+
+    const splittersMap = [...Array(splittersLimit).keys()]
+        .map((index) => {
+            return stepSolve(input, output, index)
+        })
+
+    while (true) {
+
+        for (var i = 0; i < splittersLimit * 1000; i++) {
+            const roundedResult = Math.round(i / 1000)
+            let result = splittersMap[roundedResult]()
+            if (typeof result === "function") {
+                splittersMap[roundedResult] = result
+            } else {
+                return result
+            }
+        }
     }
 }

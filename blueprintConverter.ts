@@ -45,6 +45,8 @@ export default function convertGridToFactorioBlueprint(grid: Grid): Blueprint {
 
     }
 
+    // return testing_blueprint
+
     return {
         blueprint: {
             icons: [
@@ -108,5 +110,87 @@ function createEntity(entityNumber: number, square: Square): BlueprintEntity {
         name: entityName,
         position: {x: square.x, y: square.y},
         direction
+    }
+}
+
+const testing_blueprint = {
+    "blueprint": {
+        "icons": [
+            {
+                "signal": {
+                    "type": "item",
+                    "name": "transport-belt"
+                },
+                "index": 1
+            }
+        ],
+        "entities": [
+            {
+                "entity_number": 1,
+                "name": "transport-belt",
+                "position": {
+                    "x": 0,
+                    "y": -6
+                }
+            },
+            {
+                "entity_number": 2,
+                "name": "transport-belt",
+                "position": {
+                    "x": 0,
+                    "y": -5
+                }
+            },
+            {
+                "entity_number": 3,
+                "name": "transport-belt",
+                "position": {
+                    "x": 0,
+                    "y": -4
+                }
+            },
+            {
+                "entity_number": 4,
+                "name": "splitter",
+                "position": {
+                    "x": 0,
+                    "y": -3
+                }
+            },
+            {
+                "entity_number": 5,
+                "name": "transport-belt",
+                "position": {
+                    "x": 0,
+                    "y": -2
+                }
+            },
+            {
+                "entity_number": 6,
+                "name": "transport-belt",
+                "position": {
+                    "x": 0,
+                    "y": -1
+                }
+            },
+            {
+                "entity_number": 7,
+                "name": "transport-belt",
+                "position": {
+                    "x": 0,
+                    "y": -0
+                }
+            },
+            {
+                "entity_number": 8,
+                "name": "transport-belt",
+                "position": {
+                    "x": 0,
+                    "y": 0
+                }
+            }
+        ],
+        "item": "blueprint",
+        "version": 281479273906176
     }
 }
