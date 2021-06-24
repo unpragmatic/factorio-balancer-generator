@@ -506,6 +506,41 @@ function solve3(inputs: number, outputs: number, connectors: number, ratios: num
     return undefined;
 }
 
+function stepSolve(input: number, output: number, connectors: number) {
+
+    const nextStep = (inputStates: (0 | 1)[][], normalisedRatios: number[]) => () => {
+        try {
+            const graph = generate(input, output, connectors);
+
+            const outputNodeIds = getOutputNodes(graph).map(node => node.id);
+
+            const results = inputStates
+                .map(inputState => simulate(graph, inputState))
+                .map(result => outputNodeIds.map(outputNodeId => result[outputNodeId]));
+            
+            const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
+
+            if (graphStatisfiesRatios) {
+                console.log(results)
+                return graph;
+            }
+        } catch (e) {
+            
+        }
+        return nextStep(inputStates, normalisedRatios)
+    }
+
+    const ratios = Array(output).fill(1)
+    const normalisedRatios = normalise(ratios);
+
+    const inputStates = Array(input).fill(0)
+        .map((_, idx) => idx)
+        .map(idx => Array(input + output + connectors).fill(0).map((_, innerIdx) => idx === innerIdx ? 1 : 0));
+
+    return nextStep(inputStates, normalisedRatios)
+    
+}
+
 export function smartSolve(input: number, output: number): Graph {
 
     const splittersLimit = 10;
