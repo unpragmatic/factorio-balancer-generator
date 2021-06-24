@@ -2,19 +2,20 @@
   "name": "factorio-balancer",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublish": "tsc"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "ndb": "^1.1.5",
     "ts-node": "^9.1.1",
-    "typescript": "^4.3.2"
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "@types/node": "^14.14.31"
-  }
+    "@types/node": "^14.14.31",
+    "typescript": "^4.2.4"
+  },
+  "types": "dist/index.d.ts"
 }
