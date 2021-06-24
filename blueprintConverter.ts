@@ -70,9 +70,16 @@ function createEntity(entityNumber: number, square: Square): BlueprintEntity {
     let entityName = ""
     let direction: number | undefined = undefined
 
+    let xDelta = 0.5
+    let yDelta = 0
+
     switch (square.type) {
         case "I":
+            entityName = "wooden-chest"
+            break
         case "O":
+            entityName = "iron-chest"
+            break
         case "C":
             entityName = "transport-belt"
             switch (square.direction) {
@@ -89,15 +96,16 @@ function createEntity(entityNumber: number, square: Square): BlueprintEntity {
             break
         case "S":
             entityName = "splitter"
+            xDelta = 1
             switch (square.direction) {
                 case 'W':
-                    direction = 4
+                    direction = 6
                     break
                 case 'N':
                     direction = 2
                     break
                 case 'S':
-                    direction = 6
+                    direction = 4
                     break
             }   
             break
@@ -108,7 +116,7 @@ function createEntity(entityNumber: number, square: Square): BlueprintEntity {
     return {
         entity_number: entityNumber,
         name: entityName,
-        position: {x: square.x, y: square.y},
+        position: {x: square.x + xDelta, y: square.y + yDelta},
         direction
     }
 }
@@ -122,75 +130,66 @@ const testing_blueprint = {
                     "name": "transport-belt"
                 },
                 "index": 1
+            },
+            {
+                "signal": {
+                    "type": "item",
+                    "name": "splitter"
+                },
+                "index": 2
             }
         ],
         "entities": [
             {
                 "entity_number": 1,
-                "name": "transport-belt",
+                "name": "splitter",
                 "position": {
-                    "x": 0,
-                    "y": -6
+                    "x": -11,
+                    "y": 4.5
                 }
             },
             {
                 "entity_number": 2,
                 "name": "transport-belt",
                 "position": {
-                    "x": 0,
-                    "y": -5
+                    "x": -10.5,
+                    "y": 5.5
                 }
             },
             {
                 "entity_number": 3,
                 "name": "transport-belt",
                 "position": {
-                    "x": 0,
-                    "y": -4
+                    "x": -10.5,
+                    "y": 6.5
                 }
             },
             {
                 "entity_number": 4,
-                "name": "splitter",
+                "name": "transport-belt",
                 "position": {
-                    "x": 0,
-                    "y": -3
+                    "x": -10.5,
+                    "y": 7.5
                 }
             },
             {
                 "entity_number": 5,
                 "name": "transport-belt",
                 "position": {
-                    "x": 0,
-                    "y": -2
+                    "x": -10.5,
+                    "y": 8.5
                 }
             },
             {
                 "entity_number": 6,
                 "name": "transport-belt",
                 "position": {
-                    "x": 0,
-                    "y": -1
-                }
-            },
-            {
-                "entity_number": 7,
-                "name": "transport-belt",
-                "position": {
-                    "x": 0,
-                    "y": -0
-                }
-            },
-            {
-                "entity_number": 8,
-                "name": "transport-belt",
-                "position": {
-                    "x": 0,
-                    "y": 0
+                    "x": -10.5,
+                    "y": 9.5
                 }
             }
         ],
         "item": "blueprint",
-        "version": 281479273906176
+        "version": 281479273971713
     }
 }

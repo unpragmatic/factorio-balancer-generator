@@ -253,7 +253,28 @@ export function display_grid(grid: Grid) {
         var formatted_line: string = ""
         for (let j = 0; j < grid.squares[i].length; j++) {
             const square = grid.squares[i][j]
-            formatted_line += (square?.type ?? ' ') + "|"
+
+            let transportBeltDirection = ''
+            if (square.type == 'C') {
+                switch (square.direction) {
+                    case "N":
+                        transportBeltDirection = '↑'
+                        break;
+                    case "S":
+                        transportBeltDirection = '↓'
+                        break;
+                    case "E":
+                        transportBeltDirection = '→'
+                        break;
+                    case "W":
+                        transportBeltDirection = '←'
+                        break;
+                }
+            }
+            
+            // This unholy line of code substitues the square type with it's direction if the square is a transport belt
+            formatted_line += (transportBeltDirection != '' ? transportBeltDirection : square?.type ?? ' ') + "|"
+
         }
         console.log("|" + formatted_line)
     }

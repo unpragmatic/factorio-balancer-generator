@@ -241,15 +241,16 @@ export function smartSolve(input: number, output: number): Graph {
 
     const splittersLimit = 10;
 
-    const splittersMap = [...Array(splittersLimit).keys()]
+    const splittersMap = [...Array(splittersLimit + 1).keys()]
         .map((index) => {
             return stepSolve(input, output, index)
         })
 
     while (true) {
 
-        for (var i = 0; i < splittersLimit * 1000; i++) {
-            const roundedResult = Math.round(i / 1000)
+        for (var i = 0; i < splittersLimit * 10000; i++) {
+            const roundedResult = Math.round(i / 10000)
+            console.log(roundedResult)
             let result = splittersMap[roundedResult]()
             if (typeof result === "function") {
                 splittersMap[roundedResult] = result
