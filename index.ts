@@ -1,10 +1,11 @@
 import { visualize, FactorioNode } from "./visualize";
-import { smartSolve} from "./generate"
+import { solve2 } from "./generate"
 import convertGridToFactorioBlueprint, { Blueprint } from './blueprintConverter'
 
-export default function generate(inputs: number, outputs: number): Blueprint {
+export default function generate(inputs: number, outputs: number, splitters: number): Blueprint {
 
-    const nodes = smartSolve(inputs, outputs);
+    const ratios = Array(outputs).fill(1)
+    const nodes = solve2(inputs, outputs, splitters, ratios, [])!;
     const factorioNodes: FactorioNode[] = nodes.map(node => ({
             id: node.id,
             connection: node.connection,

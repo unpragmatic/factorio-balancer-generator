@@ -1,15 +1,37 @@
 import generate from "."
 import { connection_between_squares_on_grid, Coordinate } from "./node_connector"
+var colorsLib = require('colors/safe');
 
 export type NodeType = 'empty' | 'input' | 'splitter' | 'output' | 'connector'
 
 export interface Square {
-    type: ' ' | 'I' | 'S' | 'O' | 'C'
-    x: number
+    type: ' ' | 'I' | 'S' | 'O' | 'C',
+    x: number,
     y: number,
-    direction: 'N' | 'S' | 'E' | 'W' | '?'
-    isSecondary?: boolean
+    direction: 'N' | 'S' | 'E' | 'W' | '?',
+    isSecondary?: boolean,
+    debugColor?: (text: string) => {}// DEBUG
 }
+
+// DEBUG
+var colorIndex = 0;
+
+let colors = [
+    colorsLib.green,
+    colorsLib.red,
+    colorsLib.yellow,
+    colorsLib.blue,
+    colorsLib.magenta,
+    colorsLib.cyan,
+    colorsLib.gray,
+    colorsLib.brightBlue,
+    colorsLib.brightRed,
+    colorsLib.brightYellow,
+    colorsLib.brightMagenta,
+    colorsLib.brightGreen,
+    colorsLib.brightCyan
+    // tynt.White,
+]
 
 export interface Grid {
     squares: Square[][]
@@ -41,8 +63,8 @@ export interface FactorioNode {
 //     { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
 //   ]
 
-const x_gap = 4
-const y_gap = 4
+const x_gap = 8
+const y_gap = 8
 
 function grid_filled(input: FactorioNode[], grid: Grid) {
     var mutated_grid: Grid = grid
@@ -68,7 +90,7 @@ function grid_with_empty_squares(grid: Grid) {
     for (let y = 0; y < max_y; y++) {
         for (let x = 0; x <= max_x; x++){
             if (!squares[y][x]) {
-                mutated_grid = grid_with_node_of_type(mutated_grid, 'empty', x, y)
+                mutated_grid = grid_with_node_of_type(mutated_grid, 'empty', x, y)!
             }
         }
         
@@ -83,24 +105,28 @@ function grid_connected(grid: Grid) {
     grid.nodes.forEach(node => {
         node.connection.forEach(id => {
             var connection_node: FactorioNode | undefined = grid.nodes.find(node => node.id == id)
-            // console.log('Connecting node: ', node, ' and: ', connection_node, '.')
+            console.log('Connecting node: ', node, ' and: ', connection_node, '.')
             if (connection_node) {
                 connect_nodes_on_grid(mutated_grid, node, connection_node)
             }
+            display_grid(mutated_grid)
         })
     });
 
     return mutated_grid
 }
 
-function recursive_build_node_on_grid(grid: Grid, input: FactorioNode[], node: FactorioNode, pos_x: number, pos_y: number) {
+function recursive_build_node_on_grid(grid: Grid, input: FactorioNode[], node: FactorioNode, pos_x: number, pos_y: number): Grid {
     var mutated_grid: Grid = grid
 
     if (grid.nodes.includes(node)) {
         return mutated_grid
     }
 
-    mutated_grid = grid_with_node_of_type(mutated_grid, node.type, pos_x, pos_y)
+    const result = grid_with_node_of_type(mutated_grid, node.type, pos_x, pos_y)
+    if (result) {mutated_grid = grid} else {
+        return recursive_build_node_on_grid(grid, input, node, pos_x + (x_gap / 2), pos_y)
+    }
 
     // Update node.squares
     node.squares.push(mutated_grid.squares[pos_y][pos_x])
@@ -138,6 +164,12 @@ function connect_nodes_on_grid(grid: Grid, to: FactorioNode, from: FactorioNode)
     }
 
     mutated_grid = grid_with_connection_between(mutated_grid, first_square, second_square)
+
+    colorIndex += 1
+    if (colorIndex >= colors.length) {
+        colorIndex = 0
+    }
+
     to.connected_to.push(from.id)
     from.connection_from.push(to.id)
 
@@ -149,12 +181,17 @@ function grid_with_connection_between(grid: Grid, first_square: Square, second_s
     var mutated_grid: Grid = grid
     
     let coords = connection_between_squares_on_grid(first_square, second_square, grid.squares)
-
+    // TODO - SWITCH DIRECTION TO BE INSIDE THE A* SERACH
     for (let i = 0; i < coords.length; i++) {
         // The second parameter returns the next coordinate in the list unless at the end of the list where it will use the connecting square instead
         let coord = coords[i]
-        let direction = direction_from_coord_delta(coord, i < coords.length - 1 ? coords[ i + 1] : { x: second_square.x, y: second_square.y})
-        mutated_grid = grid_with_connector_node(mutated_grid, coord.x, coord.y, direction)
+
+        // If the coord has a direction use that, otherwise infer direction from the coorindates themselves
+        let direction = coord.direction ? coord.direction : direction_from_coord_delta(coord, i < coords.length - 1 ? coords[ i + 1] : { x: second_square.x, y: second_square.y})
+
+        // DEBUG
+        let color = colors[colorIndex]
+        mutated_grid = grid_with_connector_node(mutated_grid, coord.x, coord.y, direction, color)
     }
 
     return mutated_grid
@@ -180,7 +217,8 @@ function direction_from_coord_delta(coord: Coordinate, target_coord: Coordinate)
     return '?'
 }
 
-function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y: number): Grid {
+// TODO - A much nicer way of doing this would be to remove the undefined return, and create a function to check if the grid has changed or not to use in place of the undefined check
+function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y: number): Grid | undefined {
     var mutated_grid: Grid = grid
 
     for (let i = 0; i <= pos_y; i++) {
@@ -189,10 +227,15 @@ function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y
         }
     }
 
+    // If the square exists and is not empty, return undefined as not to overwrite existing node
+    if (mutated_grid.squares[pos_y][pos_x] && mutated_grid.squares[pos_y][pos_x].type != ' ' ) {
+        return undefined
+    }
+
     switch (type) {
-        case 'connector':
-            mutated_grid = grid_with_connector_node(mutated_grid, pos_x, pos_y, '?')
-            break;
+        // case 'connector':
+        //     mutated_grid = grid_with_connector_node(mutated_grid, pos_x, pos_y, '?')
+        //     break;
         case 'input':
             mutated_grid = grid_with_input_node(mutated_grid, pos_x, pos_y)
             break;
@@ -215,9 +258,9 @@ function grid_with_node_of_type(grid: Grid, type: NodeType, pos_x: number, pos_y
     return mutated_grid
 }
 
-function grid_with_connector_node(grid: Grid, pos_x: number, pos_y: number, direction: Square["direction"]): Grid {
+function grid_with_connector_node(grid: Grid, pos_x: number, pos_y: number, direction: Square["direction"], debugColor: (text: string) => {}): Grid {
     var mutated_grid: Grid = grid
-    mutated_grid.squares[pos_y][pos_x] = { type: 'C', x: pos_x, y: pos_y, direction: direction }
+    mutated_grid.squares[pos_y][pos_x] = { type: 'C', x: pos_x, y: pos_y, direction: direction, debugColor: debugColor }
     return mutated_grid
 }
 
@@ -248,7 +291,7 @@ function grid_with_empty_square(grid: Grid, pos_x: number, pos_y: number): Grid 
     return mutated_grid
 }
 
-export function display_grid(grid: Grid) {
+export function display_grid(grid: Grid, displayID?: boolean) {
     for (let i = 0; i < grid.squares.length; i++) {
         var formatted_line: string = ""
         for (let j = 0; j < grid.squares[i].length; j++) {
@@ -269,15 +312,18 @@ export function display_grid(grid: Grid) {
                     case "W":
                         transportBeltDirection = '←'
                         break;
+                    case "?":
+                        transportBeltDirection = '?'
+                        break;
                 }
             }
             
             // This unholy line of code substitues the square type with it's direction if the square is a transport belt
-            formatted_line += (transportBeltDirection != '' ? transportBeltDirection : square?.type ?? ' ') + "|"
-
+            formatted_line += square.debugColor ? square.debugColor((transportBeltDirection != '' ? transportBeltDirection : square?.type ?? ' ')) + "|" : (transportBeltDirection != '' ? transportBeltDirection : square?.type ?? ' ') + "|" 
         }
         console.log("|" + formatted_line)
     }
+    console.log('\n')
 }
 
 export function visualize(input: FactorioNode[]): Grid {
@@ -286,7 +332,7 @@ export function visualize(input: FactorioNode[]): Grid {
         nodes: []
     })
     const complete_grid = grid_with_empty_squares(filled_grid)
+    display_grid(complete_grid)
     const connected_grid = grid_connected(complete_grid)
-    // console.log(display_grid(connected_grid))
     return connected_grid
 }   

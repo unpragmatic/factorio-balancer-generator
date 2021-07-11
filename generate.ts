@@ -418,7 +418,7 @@ function solve(input: number, output: number, connectors: number, ratios: number
 }
 
 
-function solve2(inputs: number, outputs: number, connectors: number, ratios: number[], options: any): Graph | undefined {
+export function solve2(inputs: number, outputs: number, connectors: number, ratios: number[], options: any): Graph | undefined {
     const normalisedRatios = normalise(ratios);
 
     const inputStates = Array(inputs).fill(0)
