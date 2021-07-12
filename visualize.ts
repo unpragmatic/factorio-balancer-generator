@@ -1,5 +1,5 @@
 import generate from "."
-import { connection_between_squares_on_grid, Coordinate } from "./node_connector"
+import { connection_between_squares_on_grid, PathNode } from "./node_connector"
 var colorsLib = require('colors/safe');
 
 export type NodeType = 'empty' | 'input' | 'splitter' | 'output' | 'connector'
@@ -63,7 +63,7 @@ export interface FactorioNode {
 //     { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
 //   ]
 
-const x_gap = 8
+const x_gap = 16
 const y_gap = 8
 
 function grid_filled(input: FactorioNode[], grid: Grid) {
@@ -187,7 +187,7 @@ function grid_with_connection_between(grid: Grid, first_square: Square, second_s
         let coord = coords[i]
 
         // If the coord has a direction use that, otherwise infer direction from the coorindates themselves
-        let direction = coord.direction ? coord.direction : direction_from_coord_delta(coord, i < coords.length - 1 ? coords[ i + 1] : { x: second_square.x, y: second_square.y})
+        let direction = coord.direction ? coord.direction : direction_from_coord_delta(coord, i < coords.length - 1 ? coords[ i + 1] : { x: second_square.x, y: second_square.y, is_skip: false})
 
         // DEBUG
         let color = colors[colorIndex]
@@ -197,7 +197,7 @@ function grid_with_connection_between(grid: Grid, first_square: Square, second_s
     return mutated_grid
 }
 
-function direction_from_coord_delta(coord: Coordinate, target_coord: Coordinate): Square["direction"] {
+function direction_from_coord_delta(coord: PathNode, target_coord: PathNode): Square["direction"] {
 
     const delta_x = coord.x - target_coord.x
     const delta_y = coord.y - target_coord.y

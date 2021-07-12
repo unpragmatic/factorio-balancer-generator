@@ -1,4 +1,4 @@
-import { Coordinate } from "./node_connector";
+import { PathNode } from "./node_connector";
 
 export interface SearchNode {
     x: number
@@ -7,13 +7,14 @@ export interface SearchNode {
     parent?: SearchNode
     traversable: boolean
     skippable?: boolean
-    splitter_node_coords?: Coordinate
+    splitter_node_coords?: PathNode
     is_start: boolean
     is_destination: boolean
     direction: 'N' | 'S' | 'E' | 'W' | '?'
+    is_skip: boolean
 }
 
-export function shortest_path_between_nodes(start: SearchNode, finish: SearchNode, grid: SearchNode[][]): SearchNode[] {
+export function shortest_path_between_nodes(start: SearchNode, finish: SearchNode, grid: SearchNode[][]): PathNode[] {
     let open_nodes: SearchNode[] = [];
     let closed_nodes: SearchNode[] = [];
     let current_node: SearchNode | undefined = undefined
@@ -56,9 +57,9 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
             
             // Determine if a node was skipped, and add cost for doing so
             let added_f_cost = 0
-            let distance_from_past = distance_between_two_nodes(surrounding_node, current_node)
-            if (distance_from_past > 1) {
-                added_f_cost = 5
+
+            if (surrounding_node.is_skip) {
+                added_f_cost = 30
             }
 
             // Caluclate number of movement steps
@@ -78,10 +79,15 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
         }
     }
 
-    var path_to_finish: SearchNode[] = []
+    var path_to_finish: PathNode[] = []
     
     while (current_node !== undefined) {
-        path_to_finish.unshift(current_node)
+        path_to_finish.unshift({
+            x: current_node.x,
+            y: current_node.y,
+            direction: current_node.direction,
+            is_skip: current_node.is_skip
+        })
         current_node = current_node.parent
     }
 
@@ -89,10 +95,32 @@ export function shortest_path_between_nodes(start: SearchNode, finish: SearchNod
     return path_to_finish
 }
 
-function check_node_does_not_cross_splitter_zone(node: SearchNode, start_node: SearchNode, target_node: SearchNode) {
+function node_cross_splitter_zone(node: SearchNode, start_node: SearchNode, target_node: SearchNode) {
     if (node.splitter_node_coords) {
         return ((!(start_node.x == node.splitter_node_coords.x && start_node.y == node.splitter_node_coords.y)) && (!(target_node.x == node.splitter_node_coords.x && target_node.y == node.splitter_node_coords.y)))
     }
+}
+
+function check_nodes_and_add_to_surronding(jump_range: number, nodes: SearchNode[], starting_node: SearchNode, target_node: SearchNode, surronding: SearchNode[], direction: SearchNode["direction"]) {
+
+    for (let i = 0; i <= jump_range - 1; i++) {
+        let node = nodes[i]
+        if (node == undefined) { throw "" }
+        if (i < 1 || i >= jump_range - 1) {
+            if (node_cross_splitter_zone(node, starting_node, target_node)) { throw "" }
+            if (!node.traversable) { throw "" }
+        }
+        if (i == 0) {
+            node.direction = direction
+            surronding.push(node)
+        }
+        if (i == jump_range - 1) { 
+            node.is_skip = true
+            node.direction = direction
+            surronding.push(node)
+        }
+    }
+
 }
 
 function get_surronding_nodes_in_grid(starting_node: SearchNode, target_node: SearchNode, node: SearchNode, grid: SearchNode[][]): SearchNode[] {
@@ -101,65 +129,52 @@ function get_surronding_nodes_in_grid(starting_node: SearchNode, target_node: Se
 
     const x = node.x
     const y = node.y
+
+    const jump_range = 6
     
     try {
-        let left_node = grid[y][x - 1]
-        let left_skip_node = grid[y][x - 2]
-
-        if (left_node !== undefined && left_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(left_node, starting_node, target_node)) { throw "" }
-            left_node.direction = 'W'
-            surronding.push(left_node)
-        } else if (left_skip_node !== undefined && left_skip_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(left_skip_node, starting_node, target_node)) { throw "" }
-            left_skip_node.direction = 'W'
-            surronding.push(left_skip_node)
+        const left_nodes: SearchNode[] = []
+        for (let i = 1; i <= jump_range; i++) {
+            if (y < grid.length && x - i < grid[y].length) {
+                left_nodes.push(grid[y][x - i])
+            }
         }
+
+        check_nodes_and_add_to_surronding(jump_range, left_nodes, starting_node, target_node, surronding, 'W')
+
     } catch(err) { }
     
     try {
-        let right_node = grid[y][x + 1]
-        let right_skip_node = grid[y][x + 2]
-
-        if (right_node !== undefined && right_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(right_node, starting_node, target_node)) { throw "" }
-            right_node.direction = 'E'
-            surronding.push(grid[y][x + 1])
-        } else if (right_skip_node !== undefined && right_skip_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(right_skip_node, starting_node, target_node)) { throw "" }
-            right_skip_node.direction = 'W'
-            surronding.push(right_skip_node)
+        const right_nodes: SearchNode[] = []
+        for (let i = 1; i <= jump_range; i++) {
+            if (y < grid.length && x + i < grid[y].length) {
+                right_nodes.push(grid[y][x + i])
+            }
         }
+
+        check_nodes_and_add_to_surronding(jump_range, right_nodes, starting_node, target_node, surronding, 'E')
     } catch(err) { }
     
     try {
-        let bottom_node = grid[y + 1][x]
-        let bottom_skip_node = grid[y + 2][x]
-
-        if (bottom_node !== undefined && bottom_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(bottom_node, starting_node, target_node)) { throw "" }
-            bottom_node.direction = 'S'
-            surronding.push(grid[y + 1][x])
-        } else if (bottom_skip_node !== undefined && bottom_skip_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(bottom_skip_node, starting_node, target_node)) { throw "" }
-            bottom_skip_node.direction = 'S'
-            surronding.push(bottom_skip_node)
+        const bottom_nodes: SearchNode[] = []
+        for (let i = 1; i <= jump_range; i++) {
+            if (y + i < grid.length && x < grid[y + i].length) {
+                bottom_nodes.push(grid[y + i][x])
+            }
         }
+
+        check_nodes_and_add_to_surronding(jump_range, bottom_nodes, starting_node, target_node, surronding, 'S')
     } catch(err) { }
     
     try {
-        let top_node = grid[y - 1][x]
-        let top_skip_node = grid[y - 2][x]
-
-        if (top_node !== undefined && top_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(top_node, starting_node, target_node)) { throw "" }
-            top_node.direction = 'N'
-            surronding.push(grid[y - 1][x])
-        } else if (top_skip_node !== undefined && top_skip_node.traversable) {
-            if (check_node_does_not_cross_splitter_zone(top_skip_node, starting_node, target_node)) { throw "" }
-            top_skip_node.direction = 'N'
-            surronding.push(top_skip_node)
+        const top_nodes: SearchNode[] = []
+        for (let i = 1; i <= jump_range; i++) {
+            if (y - i < grid.length && x < grid[y - i].length) {
+                top_nodes.push(grid[y - i][x])
+            }
         }
+
+        check_nodes_and_add_to_surronding(jump_range, top_nodes, starting_node, target_node, surronding, 'N')
     } catch(err) { }
 
     return surronding
