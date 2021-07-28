@@ -16,7 +16,7 @@ function getRandomArbitrary(min: number, max: number) {
 function* possible_graphs(inputs: number, outputs: number, connectors: number) {
     const [initial_graph, inputNodeIds, outputNodeIds] = generate_initial_graph(inputs, outputs, connectors);
     const graphs: Graph[] = [ initial_graph ];
-    console.log(possible_edges(initial_graph).length);
+    // console.log(possible_edges(initial_graph).length);
 
     const pathFromToOneOf = (graph: Graph, sourceNodeId: number, destinationNodeId: number[], visited: number[]): boolean => {
         return !visited.includes(sourceNodeId) && (
@@ -328,7 +328,7 @@ function simulate(graph: Graph, inputState: number[]) {
         const prev = nodeInputs[nodeId]
         nodeInputs[nodeId] += delta
         if (!Number.isNaN(prev) && Number.isNaN(nodeInputs[nodeId])) {
-            console.log(nodeId, prev, delta, nodeInputs[nodeId])
+            // console.log(nodeId, prev, delta, nodeInputs[nodeId])
         }
         nodeInputsHistory[nodeId].push(nodeInputs[nodeId])
     }
@@ -361,7 +361,7 @@ function simulate(graph: Graph, inputState: number[]) {
 }
 
 function printGraph(graph: Graph) {
-    console.log(graph)
+    // console.log(graph)
 }
 
 function aboutEqual(a: number, b: number, delta: number) {
@@ -403,7 +403,7 @@ function solve(input: number, output: number, connectors: number, ratios: number
             const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
 
             if (graphStatisfiesRatios) {
-                console.log(results)
+                // console.log(results)
                 return graph;
             }
         } catch (e) {
@@ -411,9 +411,6 @@ function solve(input: number, output: number, connectors: number, ratios: number
         }
 
         iterationCount += 1;
-        if (iterationCount % 10000 === 0) {
-            process.stdout.write(`\rIteration Count: ${iterationCount}`,)
-        }
     }
 }
 
@@ -443,7 +440,7 @@ export function solve2(inputs: number, outputs: number, connectors: number, rati
         const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
 
         if (graphStatisfiesRatios) {
-            console.log(results)
+            // console.log(results)
             return graph;
         
         
@@ -451,7 +448,7 @@ export function solve2(inputs: number, outputs: number, connectors: number, rati
 
         iterationCount += 1;
         if (iterationCount % 10000 === 0) {
-            process.stdout.write(`\rIteration Count: ${iterationCount}`,)
+            // process.stdout.write(`\rIteration Count: ${iterationCount}`,)
         }
 
         // Get next
@@ -488,7 +485,7 @@ function solve3(inputs: number, outputs: number, connectors: number, ratios: num
         const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
 
         if (graphStatisfiesRatios) {
-            console.log(results)
+            // console.log(results)
             return graph;
         
         
@@ -496,7 +493,7 @@ function solve3(inputs: number, outputs: number, connectors: number, ratios: num
 
         iterationCount += 1;
         if (iterationCount % 10000 === 0) {
-            process.stdout.write(`\rIteration Count: ${iterationCount}`,)
+            // process.stdout.write(`\rIteration Count: ${iterationCount}`,)
         }
 
         // Get next
@@ -521,7 +518,7 @@ function stepSolve(input: number, output: number, connectors: number) {
             const graphStatisfiesRatios = results.every(result => arrayAboutEqual(result, normalisedRatios, 0.01));
 
             if (graphStatisfiesRatios) {
-                console.log(results)
+                // console.log(results)
                 return graph;
             }
         } catch (e) {
@@ -554,7 +551,7 @@ export function smartSolve(input: number, output: number): Graph {
 
         for (var i = 0; i < splittersLimit * 10000; i++) {
             const roundedResult = Math.round(i / 10000)
-            console.log(roundedResult)
+            // console.log(roundedResult)
             let result = splittersMap[roundedResult]()
             if (typeof result === "function") {
                 splittersMap[roundedResult] = result

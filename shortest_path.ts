@@ -103,21 +103,22 @@ function node_cross_splitter_zone(node: SearchNode, start_node: SearchNode, targ
 
 function check_nodes_and_add_to_surronding(jump_range: number, nodes: SearchNode[], starting_node: SearchNode, target_node: SearchNode, surronding: SearchNode[], direction: SearchNode["direction"]) {
 
-    for (let i = 0; i <= jump_range - 1; i++) {
+    for (let i = 0; i <= nodes.length - 1; i++) {
         let node = nodes[i]
-        if (node == undefined) { throw "" }
-        if (i < 1 || i >= jump_range - 1) {
-            if (node_cross_splitter_zone(node, starting_node, target_node)) { throw "" }
-            if (!node.traversable) { throw "" }
+        let node_copy = JSON.parse(JSON.stringify(node))
+        if (node_copy == undefined) { throw "" }
+        if (i == 0 || i == nodes.length - 1) {
+            if (node_cross_splitter_zone(node_copy, starting_node, target_node)) { throw "" }
+            if (!node_copy.traversable) { throw "" }
         }
         if (i == 0) {
-            node.direction = direction
-            surronding.push(node)
+            node_copy.direction = direction
+            surronding.push(node_copy)
         }
         if (i == jump_range - 1) { 
-            node.is_skip = true
-            node.direction = direction
-            surronding.push(node)
+            node_copy.is_skip = true
+            node_copy.direction = direction
+            surronding.push(node_copy)
         }
     }
 
@@ -130,7 +131,7 @@ function get_surronding_nodes_in_grid(starting_node: SearchNode, target_node: Se
     const x = node.x
     const y = node.y
 
-    const jump_range = 6
+    const jump_range = 2
     
     try {
         const left_nodes: SearchNode[] = []

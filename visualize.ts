@@ -1,4 +1,3 @@
-import generate from "."
 import { connection_between_squares_on_grid, PathNode } from "./node_connector"
 var colorsLib = require('colors/safe');
 
