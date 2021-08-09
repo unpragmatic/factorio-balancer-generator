@@ -2,6 +2,8 @@ import { visualize, FactorioNode } from "./visualize";
 import { solve2 } from "./generate"
 import convertGridToFactorioBlueprint, { Blueprint } from './blueprintConverter'
 
+export { FactorioNode } from "./visualize"
+
 export function generateBlueprint(inputs: number, outputs: number, splitters: number): Blueprint {
 
     const factorioNodes = generateNodes(inputs, outputs, splitters)
