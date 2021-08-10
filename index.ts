@@ -3,16 +3,27 @@ import { solve2 } from "./generate"
 import convertGridToFactorioBlueprint, { Blueprint } from './blueprintConverter'
 
 export { FactorioNode } from "./visualize"
+export { Blueprint } from "./blueprintConverter"
 
-export function generateBlueprint(inputs: number, outputs: number, splitters: number): Blueprint {
+export interface Result {
+    blueprint: Blueprint,
+    nodes: FactorioNode[]
+}
+
+export function generateBlueprint(inputs: number, outputs: number, splitters: number): Result {
 
     const factorioNodes = generateNodes(inputs, outputs, splitters)
 
     const grid = visualize(factorioNodes);
-    return convertGridToFactorioBlueprint(grid);
+    const blueprint = convertGridToFactorioBlueprint(grid);
+
+    return {
+        blueprint: blueprint,
+        nodes: factorioNodes
+    }
 }
 
-export function generateNodes(inputs: number, outputs: number, splitters: number): FactorioNode[] {
+function generateNodes(inputs: number, outputs: number, splitters: number): FactorioNode[] {
     const ratios = Array(outputs).fill(1)
     const nodes = solve2(inputs, outputs, splitters, ratios, [])!;
     return nodes.map(node => ({
