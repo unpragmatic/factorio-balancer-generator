@@ -4,9 +4,9 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "prepare": "tsc",
     "prepublishOnly": "npm version patch",
-    "publish": "npm run build && npm publish --public"
+    "publish": "npm publish --public"
   },
   "author": "",
   "license": "ISC",
