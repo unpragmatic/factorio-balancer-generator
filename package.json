@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "publish": " npm version patch && npm run build && npm publish --public"
+    "prepublishOnly": "npm version patch",
+    "publish": "npm run build && npm publish --public"
   },
   "author": "",
   "license": "ISC",
