@@ -1,5 +1,4 @@
 import { connection_between_squares_on_grid, PathNode } from "./node_connector"
-var colorsLib = require('colors/safe');
 
 export type NodeType = 'empty' | 'input' | 'splitter' | 'output' | 'connector'
 
@@ -16,19 +15,19 @@ export interface Square {
 var colorIndex = 0;
 
 let colors = [
-    colorsLib.green,
-    colorsLib.red,
-    colorsLib.yellow,
-    colorsLib.blue,
-    colorsLib.magenta,
-    colorsLib.cyan,
-    colorsLib.gray,
-    colorsLib.brightBlue,
-    colorsLib.brightRed,
-    colorsLib.brightYellow,
-    colorsLib.brightMagenta,
-    colorsLib.brightGreen,
-    colorsLib.brightCyan
+    // colorsLib.green,
+    // colorsLib.red,
+    // colorsLib.yellow,
+    // colorsLib.blue,
+    // colorsLib.magenta,
+    // colorsLib.cyan,
+    // colorsLib.gray,
+    // colorsLib.brightBlue,
+    // colorsLib.brightRed,
+    // colorsLib.brightYellow,
+    // colorsLib.brightMagenta,
+    // colorsLib.brightGreen,
+    // colorsLib.brightCyan
     // tynt.White,
 ]
 
@@ -189,7 +188,8 @@ function grid_with_connection_between(grid: Grid, first_square: Square, second_s
         let direction = coord.direction ? coord.direction : direction_from_coord_delta(coord, i < coords.length - 1 ? coords[ i + 1] : { x: second_square.x, y: second_square.y, is_skip: false})
 
         // DEBUG
-        let color = colors[colorIndex]
+        // let color = colors[colorIndex]
+        let color = () => "#000000"
         mutated_grid = grid_with_connector_node(mutated_grid, coord.x, coord.y, direction, color)
     }
 

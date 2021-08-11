@@ -1,11 +1,11 @@
 {
   "name": "factorio-balancer",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "prepublish": "tsc",
-    "test": "npx ts-node test.ts"
+    "build": "tsc",
+    "publish": " npm version patch && npm run build && npm publish --public"
   },
   "author": "",
   "license": "ISC",
