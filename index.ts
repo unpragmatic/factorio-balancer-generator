@@ -6,16 +6,22 @@ export { FactorioNode } from "./visualize"
 export { Blueprint } from "./blueprintConverter"
 
 export interface Result {
-    blueprint: Blueprint,
+    blueprint?: Blueprint,
     nodes: FactorioNode[]
 }
 
 export function generateBlueprint(inputs: number, outputs: number, splitters: number): Result {
 
     const factorioNodes = generateNodes(inputs, outputs, splitters)
+    let blueprint: Blueprint | undefined
 
-    const grid = visualize(factorioNodes);
-    const blueprint = convertGridToFactorioBlueprint(grid);
+    try {
+        const grid = visualize(factorioNodes);
+        blueprint = convertGridToFactorioBlueprint(grid);
+    }
+    catch {
+        console.log("Unable to generate blueprint")
+    }
 
     return {
         blueprint: blueprint,
