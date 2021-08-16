@@ -61,8 +61,8 @@ export interface FactorioNode {
 //     { id: 7, type: 'output', connection: [], squares: [], connected_to: [], connection_from: [] }
 //   ]
 
-const x_gap = 16
-const y_gap = 8
+const x_gap = 8
+const y_gap = 4
 
 function grid_filled(input: FactorioNode[], grid: Grid) {
     var mutated_grid: Grid = grid
